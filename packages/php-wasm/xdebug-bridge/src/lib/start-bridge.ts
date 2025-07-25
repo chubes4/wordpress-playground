@@ -11,6 +11,7 @@ export type StartBridgeConfig = {
 	cdpHost?: string;
 	dbgpPort?: number;
 	phpRoot?: string;
+	excludedPaths?: string[];
 	phpInstance?: PHP;
 	getPHPFile?: (path: string) => string | Promise<string>;
 	breakOnFirstLine?: boolean;
@@ -72,5 +73,6 @@ export async function startBridge(config: StartBridgeConfig) {
 		phpRoot,
 		getPHPFile,
 		breakOnFirstLine,
+		excludedPaths: config.excludedPaths,
 	});
 }
