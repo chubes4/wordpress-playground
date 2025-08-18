@@ -22,7 +22,6 @@ describe('Bridge', () => {
 			if (event === 'clientConnected') {
 				setTimeout(cb, 0);
 			}
-
 			return this;
 		});
 	});
@@ -113,6 +112,16 @@ describe('Bridge', () => {
 			const result = await args.getPHPFile('file:///custom.php');
 			expect(getPHPFile).toHaveBeenCalledWith('file:///custom.php');
 			expect(result).toBe('<?php echo "Hello World";');
+		});
+
+		it('excludes given paths', async () => {
+			const paths = ['/foo', '/bar'];
+
+			await startBridge({ excludedPaths: paths });
+
+			const args = (XdebugCDPBridge as any).mock.calls[0][2];
+
+			expect(args.excludedPaths).toEqual(paths);
 		});
 	});
 

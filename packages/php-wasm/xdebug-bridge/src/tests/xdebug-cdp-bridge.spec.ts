@@ -1,6 +1,6 @@
 import fs from 'fs';
-import { createHash } from 'crypto';
 import { vi } from 'vitest';
+import { createHash } from 'crypto';
 import { DbgpSession } from '../lib/dbgp-session';
 import { CDPServer } from '../lib/cdp-server';
 import { XdebugCDPBridge } from '../lib/xdebug-cdp-bridge';
@@ -364,6 +364,7 @@ describe('XdebugCDPBridge', () => {
 			vi.spyOn(cdpServer, 'sendMessage').mockImplementation((message) => {
 				if (message.method === 'Debugger.scriptParsed') {
 					script = message;
+
 					resolve();
 				}
 				return original(message);
@@ -407,6 +408,100 @@ describe('XdebugCDPBridge', () => {
 		);
 		expect(sourceMap.mappings).toEqual(
 			'AAAA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA'
+		);
+	});
+
+	it('ignores files from excluded path', async () => {
+		bridge = new XdebugCDPBridge(dbgpSession, cdpServer, {
+			knownScriptUrls: [],
+			getPHPFile: (file) => php.readFileAsText(file),
+			breakOnFirstLine: true,
+		});
+
+		const excludedPath = '/internal/shared';
+
+		const file = `${fixtures}/test.php`;
+
+		php.writeFile(file, fs.readFileSync(file).toString());
+
+		bridge.start();
+
+		let script;
+		let sourceMap;
+
+		await php.runStream({ scriptPath: file });
+
+		await new Promise<void>((resolve) => {
+			const original = cdpServer.sendMessage.bind(cdpServer);
+			vi.spyOn(cdpServer, 'sendMessage').mockImplementation((message) => {
+				if (message.method === 'Debugger.scriptParsed') {
+					script = message;
+					resolve();
+				}
+				return original(message);
+			});
+		});
+
+		sourceMap = JSON.parse(
+			Buffer.from(
+				script!.params.sourceMapURL.split(',')[1],
+				'base64'
+			).toString('utf8')
+		);
+
+		expect(sourceMap).toEqual(
+			expect.objectContaining({
+				sources: expect.arrayContaining([
+					expect.stringContaining(excludedPath),
+				]),
+			}),
+		);
+
+		bridge.stop();
+
+		php.exit();
+
+		php = new PHP(
+			await loadNodeRuntime(RecommendedPHPVersion, { withXdebug: true })
+		);
+
+		dbgpSession = new DbgpSession();
+		cdpServer = new CDPServer();
+		bridge = new XdebugCDPBridge(dbgpSession, cdpServer, {
+			knownScriptUrls: [],
+			getPHPFile: (file) => php.readFileAsText(file),
+			breakOnFirstLine: true,
+			excludedPaths: [excludedPath],
+		});
+
+		bridge.start();
+
+		await php.runStream({ scriptPath: file });
+
+		await new Promise<void>((resolve) => {
+			const original = cdpServer.sendMessage.bind(cdpServer);
+			vi.spyOn(cdpServer, 'sendMessage').mockImplementation((message) => {
+				if (message.method === 'Debugger.scriptParsed') {
+					script = message;
+					resolve();
+				}
+				return original(message);
+			});
+		});
+
+		sourceMap = JSON.parse(
+			Buffer.from(
+				script!.params.sourceMapURL.split(',')[1],
+				'base64'
+			).toString('utf8')
+		);
+
+		expect(sourceMap).toEqual(
+			expect.objectContaining({
+				sources: expect.arrayContaining([
+					expect.stringContaining(file),
+				]),
+			}),
 		);
 	});
 });
