@@ -6,18 +6,15 @@ Here's how to use it:
 
 ```js
 import { PHP } from '@php-wasm/web';
+import { loadWebRuntime } from '@php-wasm/web'
 
-// PHP.load() calls import('php.wasm') internally
+// loadWebRuntime() calls import('php.wasm') and import('icudt74l.dat') internally.
 // Your bundler must resolve import('php.wasm') as a static file URL.
 // If you use Webpack, you can use the file-loader to do so.
-const php = await PHP.load('8.0', {
-	requestHandler: {
-		documentRoot: '/www',
-	},
-});
+const php = new PHP(await loadWebRuntime('8.3'))
 
 // Create and run a script directly
-php.mkdirTree('/www');
+php.mkdir('/www');
 php.writeFile('/www/index.php', `<?php echo "Hello " . $_POST['name']; ?>`);
 await php.run({ scriptPath: './index.php' });
 
@@ -44,18 +41,32 @@ Error: Error during dependency optimization:
       1 │ import dataFilename from './icudt74l.dat';
 ```
 
-The `@php-wasm/web` package imports a non-JavaScript asset file using the import syntax. This ensures
+The `@php-wasm/web` package imports a few non-JavaScript assets file using the import syntax. This ensures
 all the required dependencies may be tracked statically, but it creates an inconvenience for apps relying
 on bundlers.
 
 To resolve that error, you'll need to configure your bundler to resolve the import above to the URL
 of the `icudt74l.dat` in your app, e.g. `https://playground.wordpress.net/assets/icudt74l.dat`.
 
-In Vite, you can use the `assetsInclude` option:
+In Vite, you can use the following options to support importing all the required assets types:
 
 ```js
 export default defineConfig({
-	assetsInclude: [/\.dat$/],
+	assetsInclude: [/\.dat$/, /\.wasm$/, /\.so$/, /\.la$/],
+	optimizeDeps: {
+		esbuildOptions: {
+			loader: {
+				'.dat': 'file',
+				'.wasm': 'file',
+				'.so': 'file',
+				'.la': 'file',
+			},
+		},
+	},
+	build: {
+		// outDir is required with the 'file' loader
+		outDir: path.resolve(workspaceRoot, 'dist'),
+	}
 });
 ```
 
