@@ -5,8 +5,10 @@ import { setActiveModal } from '../../lib/state/redux/slice-ui';
 import { updateSiteMetadata } from '../../lib/state/redux/slice-sites';
 import { Modal } from '../modal';
 import ModalButtons from '../modal/modal-buttons';
+import { useI18n } from '../../lib/i18n';
 
 export function RenameSiteModal() {
+	const { __ } = useI18n();
 	const dispatch = useAppDispatch();
 	const site = useAppSelector((state) =>
 		state.ui.activeSite?.slug
@@ -46,8 +48,10 @@ export function RenameSiteModal() {
 
 	return (
 		<Modal
-			title="Rename Playground"
-			contentLabel='This is a dialog window which overlays the main content of the page. The modal begins with a heading 2 called "Rename Playground". Pressing the Close button will close the modal and bring you back to where you were on the page.'
+			title={__('Rename Playground')}
+			contentLabel={__(
+				'This is a dialog window which overlays the main content of the page. The modal begins with a heading 2 called "Rename Playground". Pressing the Close button will close the modal and bring you back to where you were on the page.'
+			)}
 			onRequestClose={closeModal}
 			small
 		>
@@ -60,15 +64,15 @@ export function RenameSiteModal() {
 			>
 				<TextControl
 					__nextHasNoMarginBottom
-					label="Name"
+					label={__('Name')}
 					value={name}
 					onChange={(val: string) => setName(val)}
-					placeholder="e.g. Testing Gutenberg 24.17"
+					placeholder={__('e.g. Testing Gutenberg 24.17')}
 					maxLength={80}
 					autoFocus
 				/>
 				<ModalButtons
-					submitText="Rename"
+					submitText={__('Rename')}
 					areDisabled={!name.trim()}
 					areBusy={isSubmitting}
 					onCancel={closeModal}
