@@ -6,6 +6,7 @@ import { selectSiteBySlug } from '../../../lib/state/redux/slice-sites';
 import { redirectTo, PlaygroundRoute } from '../../../lib/state/url/router';
 import type { SiteFormData } from './unconnected-site-settings-form';
 import { UnconnectedSiteSettingsForm } from './unconnected-site-settings-form';
+import { useI18n } from '../../../lib/i18n';
 
 export function TemporarySiteSettingsForm({
 	siteSlug,
@@ -14,6 +15,7 @@ export function TemporarySiteSettingsForm({
 	siteSlug: string;
 	onSubmit?: () => void;
 }) {
+	const { __ } = useI18n();
 	const siteInfo = useAppSelector((state) =>
 		selectSiteBySlug(state, siteSlug)
 	)!;
@@ -62,11 +64,13 @@ export function TemporarySiteSettingsForm({
 					className={`${css.footer} ${css.formSection}`}
 				>
 					<p>
-						<b>Destructive action!</b> Applying these settings will
-						reset the WordPress site to its initial state.
+						<b>{__('Destructive action!')}</b>{' '}
+						{__(
+							'Applying these settings will reset the WordPress site to its initial state.'
+						)}
 					</p>
 					<Button type="submit" variant="primary">
-						Apply Settings & Reset Playground
+						{__('Apply Settings & Reset Playground')}
 					</Button>
 				</VStack>
 			}

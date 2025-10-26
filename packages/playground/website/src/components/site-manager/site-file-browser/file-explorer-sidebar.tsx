@@ -15,6 +15,7 @@ import {
 } from '@wp-playground/components';
 import { logger } from '@php-wasm/logger';
 import { dirname, normalizePath } from '@php-wasm/util';
+import { useI18n } from '../../../lib/i18n';
 
 export const MAX_INLINE_FILE_BYTES = 1024 * 1024; // 1MB
 
@@ -69,6 +70,7 @@ export function FileExplorerSidebar({
 	onShowMessage,
 	documentRoot,
 }: FileExplorerSidebarProps) {
+	const { __ } = useI18n();
 	const treeRef = useRef<FilePickerTreeHandle | null>(null);
 
 	const treeInitialPath = useMemo(() => {
@@ -96,10 +98,10 @@ export function FileExplorerSidebar({
 				);
 				await onShowMessage(
 					<>
-						<p>File too large to open (&gt;1MB).</p>
+						<p>{__('File too large to open (>1MB).')}</p>
 						<p>
 							<a href={url} download={filename}>
-								Download {filename}
+								{__('Download %s').replace('%s', filename)}
 							</a>
 						</p>
 					</>
@@ -113,10 +115,10 @@ export function FileExplorerSidebar({
 				);
 				await onShowMessage(
 					<>
-						<p>Binary file. Cannot be edited.</p>
+						<p>{__('Binary file. Cannot be edited.')}</p>
 						<p>
 							<a href={url} download={filename}>
-								Download {filename}
+								{__('Download %s').replace('%s', filename)}
 							</a>
 						</p>
 					</>
@@ -127,14 +129,14 @@ export function FileExplorerSidebar({
 			await onFileOpened(path, text, shouldFocus);
 		} catch (error) {
 			logger.error('Could not open file', error);
-			await onShowMessage('Could not open file.');
+			await onShowMessage(__('Could not open file.'));
 		}
 	};
 
 	return (
 		<div className={styles.fileExplorerContainer}>
 			<div className={styles.fileExplorerHeader}>
-				<span className={styles.fileExplorerTitle}>Files</span>
+				<span className={styles.fileExplorerTitle}>{__('Files')}</span>
 				<div className={styles.fileExplorerActions}>
 					<button
 						className={styles.fileExplorerButton}
@@ -147,10 +149,10 @@ export function FileExplorerSidebar({
 								lastSelectedPath ?? undefined
 							);
 						}}
-						title="Create new file"
+						title={__('Create new file')}
 					>
 						<Icon icon={fileIcon} size={16} />
-						New File
+						{__('New File')}
 					</button>
 					<button
 						className={styles.fileExplorerButton}
@@ -163,10 +165,10 @@ export function FileExplorerSidebar({
 								lastSelectedPath ?? undefined
 							);
 						}}
-						title="Create new folder"
+						title={__('Create new folder')}
 					>
 						<Icon icon={folderIcon} size={16} />
-						New Folder
+						{__('New Folder')}
 					</button>
 				</div>
 			</div>

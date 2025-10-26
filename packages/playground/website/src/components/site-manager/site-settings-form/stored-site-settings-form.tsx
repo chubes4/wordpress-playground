@@ -14,6 +14,7 @@ import {
 } from '../../../lib/state/redux/slice-sites';
 import type { SiteFormData } from './unconnected-site-settings-form';
 import { UnconnectedSiteSettingsForm } from './unconnected-site-settings-form';
+import { useI18n } from '../../../lib/i18n';
 
 export function StoredSiteSettingsForm({
 	siteSlug,
@@ -22,6 +23,7 @@ export function StoredSiteSettingsForm({
 	siteSlug: string;
 	onSubmit?: () => void;
 }) {
+	const { __ } = useI18n();
 	const siteInfo = useAppSelector((state) =>
 		selectSiteBySlug(state, siteSlug)
 	)!;
@@ -75,7 +77,9 @@ export function StoredSiteSettingsForm({
 				>
 					<Icon icon={info} size={16} />
 					<span>
-						Stored Playgrounds have limited configuration options.
+						{__(
+							'Stored Playgrounds have limited configuration options.'
+						)}
 					</span>
 				</HStack>
 			}
@@ -91,7 +95,7 @@ export function StoredSiteSettingsForm({
 						variant="primary"
 						style={{ justifyContent: 'center' }}
 					>
-						Save & Reload
+						{__('Save & Reload')}
 					</Button>
 				</VStack>
 			}

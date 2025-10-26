@@ -8,6 +8,7 @@ import classNames from 'classnames';
 import { __experimentalVStack as VStack } from '@wordpress/components';
 import { useSupportedWordPressVersions } from './use-supported-wordpress-versions';
 import { RecommendedPHPVersion } from '@wp-playground/common';
+import { useI18n } from '../../../lib/i18n';
 
 type ConfigurableFields = Record<
 	keyof SiteFormData & ('wpVersion' | 'language' | 'multisite'),
@@ -51,6 +52,7 @@ export function UnconnectedSiteSettingsForm({
 		multisite: false,
 		...defaultValues,
 	};
+	const { __ } = useI18n();
 	const {
 		handleSubmit,
 		setValue,
@@ -85,7 +87,7 @@ export function UnconnectedSiteSettingsForm({
 					name="wpVersion"
 					rules={{
 						required: {
-							message: 'WordPress Version is required',
+							message: __('WordPress Version is required'),
 							value: true,
 						},
 					}}
@@ -95,7 +97,7 @@ export function UnconnectedSiteSettingsForm({
 							<SelectControl
 								size="compact"
 								__nextHasNoMarginBottom={true}
-								label="WordPress Version"
+								label={__('WordPress Version')}
 								labelPosition="side"
 								help={errors.wpVersion?.message}
 								className={classNames(css.addSiteInput, {
@@ -109,7 +111,7 @@ export function UnconnectedSiteSettingsForm({
 									 */
 									[
 										{
-											label: '-- Select a version --',
+											label: __('-- Select a version --'),
 											value: '',
 										},
 										...Object.keys(
@@ -133,7 +135,7 @@ export function UnconnectedSiteSettingsForm({
 									rel="noreferrer"
 									style={{ fontSize: '0.9em' }}
 								>
-									Need an older version?
+									{__('Need an older version?')}
 								</a>
 							)}
 						</div>
@@ -145,7 +147,7 @@ export function UnconnectedSiteSettingsForm({
 					name="phpVersion"
 					rules={{
 						required: {
-							message: 'PHP Version is required',
+							message: __('PHP version is required'),
 							value: true,
 						},
 					}}
@@ -153,7 +155,7 @@ export function UnconnectedSiteSettingsForm({
 						<SelectControl
 							size="compact"
 							__nextHasNoMarginBottom={true}
-							label="PHP Version"
+							label={__('PHP Version')}
 							labelPosition="side"
 							help={errors.phpVersion?.message}
 							className={classNames(css.addSiteInput, {
@@ -180,7 +182,7 @@ export function UnconnectedSiteSettingsForm({
 						<SelectControl
 							size="compact"
 							__nextHasNoMarginBottom={true}
-							label="Language"
+							label={__('Language')}
 							labelPosition="side"
 							help={errors.language?.message}
 							className={classNames(css.addSiteInput, {
@@ -446,7 +448,7 @@ export function UnconnectedSiteSettingsForm({
 					name="withNetworking"
 					render={({ field: { onChange, ref, ...rest } }) => (
 						<CheckboxControl
-							label="Allow network access"
+							label={__('Allow network access')}
 							onChange={(isChecked) => {
 								setValue('withNetworking', isChecked);
 							}}
@@ -463,7 +465,7 @@ export function UnconnectedSiteSettingsForm({
 					disabled={!enabledFields.multisite}
 					render={({ field: { onChange, ref, ...rest } }) => (
 						<CheckboxControl
-							label="Create a multisite network"
+							label={__('Create a multisite network')}
 							onChange={(isChecked) => {
 								setValue('multisite', isChecked);
 							}}
