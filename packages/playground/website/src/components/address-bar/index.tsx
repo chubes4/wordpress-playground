@@ -1,11 +1,13 @@
 import React, { useCallback } from 'react';
 import css from './style.module.css';
+import { useI18n } from '../../lib/i18n';
 
 interface AddressBarProps {
 	url?: string;
 	onUpdate?: (url: string) => void;
 }
 export default function AddressBar({ url, onUpdate }: AddressBarProps) {
+	const { __ } = useI18n();
 	const input = React.useRef<HTMLInputElement>(null);
 	const [value, setValue] = React.useState(url || '');
 	const [isFocused, setIsFocused] = React.useState(false);
@@ -38,7 +40,9 @@ export default function AddressBar({ url, onUpdate }: AddressBarProps) {
 					onBlur={() => setIsFocused(false)}
 					name="url"
 					type="text"
-					aria-label='URL to visit in the WordPress site, like"/wp-admin"'
+					aria-label={__(
+						'URL to visit in the WordPress site, like"/wp-admin"'
+					)}
 					autoComplete="off"
 				/>
 			</div>
