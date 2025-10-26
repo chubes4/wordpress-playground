@@ -21,6 +21,7 @@ import { persistTemporarySite } from '../../lib/state/redux/persist-temporary-si
 import type { SiteStorageType } from '../../lib/state/redux/slice-sites';
 import { logger } from '@php-wasm/logger';
 import { isOpfsAvailable } from '../../lib/state/opfs/opfs-site-storage';
+import { useI18n } from '../../lib/i18n';
 
 type StorageOption = Extract<SiteStorageType, 'opfs' | 'local-fs'>;
 
@@ -36,6 +37,7 @@ const errorTextStyle: CSSProperties = {
 };
 
 export function SaveSiteModal() {
+	const { __, sprintf } = useI18n();
 	const dispatch = useAppDispatch();
 	const site = useAppSelector((state) =>
 		state.ui.activeSite?.slug
@@ -145,8 +147,8 @@ export function SaveSiteModal() {
 	const localIsAvailable = localFsAvailability === 'available';
 	const localUnavailableMessage =
 		localFsAvailability === 'not-available'
-			? 'Not available in this browser'
-			: 'Not available on this site';
+			? __('Not available in this browser')
+			: __('Not available on this site');
 
 	const chooseStorage = (storage: StorageOption) => {
 		if (storage === 'local-fs' && !localIsAvailable) {
@@ -196,7 +198,7 @@ export function SaveSiteModal() {
 		setSubmitError(null);
 		if (!(window as any).showDirectoryPicker) {
 			setDirectoryError(
-				'Directory selection is not supported in this browser.'
+				__('Directory selection is not supported in this browser.')
 			);
 			return;
 		}
@@ -212,7 +214,9 @@ export function SaveSiteModal() {
 			setDirectoryPermission(permission);
 			if (permission !== 'granted') {
 				setDirectoryError(
-					'Allow Playground to edit that directory in the browser prompt to continue.'
+					__(
+						'Allow Playground to edit that directory in the browser prompt to continue.'
+					)
 				);
 			} else {
 				setDirectoryError(null);
@@ -222,7 +226,7 @@ export function SaveSiteModal() {
 				return;
 			}
 			logger.error(error);
-			setDirectoryError('Unable to access the selected directory.');
+			setDirectoryError(__('Unable to access the selected directory.'));
 		}
 	};
 
@@ -238,14 +242,16 @@ export function SaveSiteModal() {
 
 			if (selectedStorage === 'local-fs') {
 				if (!directoryHandle) {
-					setDirectoryError('Choose a directory to continue.');
+					setDirectoryError(__('Choose a directory to continue.'));
 					return;
 				}
 				const permission = await ensureWriteAccess(directoryHandle);
 				setDirectoryPermission(permission);
 				if (permission !== 'granted') {
 					setDirectoryError(
-						'Allow Playground to edit that directory in the browser prompt to continue.'
+						__(
+							'Allow Playground to edit that directory in the browser prompt to continue.'
+						)
 					);
 					return;
 				}
@@ -268,7 +274,7 @@ export function SaveSiteModal() {
 			// Don't close modal here - useEffect will close it when save completes
 		} catch (error) {
 			logger.error(error);
-			setSubmitError('Saving failed. Please try again.');
+			setSubmitError(__('Saving failed. Please try again.'));
 			setIsSubmitting(false);
 		}
 	};
@@ -295,8 +301,8 @@ export function SaveSiteModal() {
 
 	return (
 		<Modal
-			title="Save Playground"
-			contentLabel="Save Playground"
+			title={__('Save Playground')}
+			contentLabel={__('Save Playground')}
 			onRequestClose={handleRequestClose}
 			isDismissible={!isSaving}
 			small
@@ -310,7 +316,7 @@ export function SaveSiteModal() {
 				autoComplete="off"
 			>
 				<TextControl
-					label="Playground name"
+					label={__('Playground name')}
 					value={name}
 					onChange={(value) => setName(value)}
 					autoFocus
@@ -321,19 +327,23 @@ export function SaveSiteModal() {
 					disabled={isSaving}
 				/>
 				<RadioControl
-					label="Storage location"
+					label={__('Storage location')}
 					selected={selectedStorage}
 					options={[
 						{
 							label:
-								'Save in this browser' +
-								(!isOpfsAvailable ? ' (not available)' : ''),
+								__('Save in this browser') +
+								(!isOpfsAvailable
+									? ` (${__('not available')})`
+									: ''),
 							value: 'opfs',
 						},
 						{
 							label:
-								'Save to a local directory' +
-								(!localIsAvailable ? ' (not available)' : ''),
+								__('Save to a local directory') +
+								(!localIsAvailable
+									? ` (${__('not available')})`
+									: ''),
 							value: 'local-fs',
 						},
 					]}
@@ -341,13 +351,15 @@ export function SaveSiteModal() {
 					disabled={isSaving}
 				/>
 				{!isOpfsAvailable && selectedStorage === 'opfs' && (
-					<p style={helpTextStyle}>Not available in this browser</p>
+					<p style={helpTextStyle}>
+						{__('Not available in this browser')}
+					</p>
 				)}
 				{!localIsAvailable && selectedStorage === 'local-fs' && (
 					<p style={helpTextStyle}>{localUnavailableMessage}</p>
 				)}
 				{selectedStorage === 'local-fs' && (
-					<BaseControl label="Local directory">
+					<BaseControl label={__('Local directory')}>
 						<div
 							style={{
 								display: 'flex',
@@ -360,7 +372,7 @@ export function SaveSiteModal() {
 								className="components-text-control__input"
 								value={directoryHandle?.name ?? ''}
 								readOnly
-								placeholder="Choose a directory..."
+								placeholder={__('Choose a directory...')}
 								style={{ flexGrow: 1 }}
 							/>
 							<Button
@@ -369,7 +381,7 @@ export function SaveSiteModal() {
 								onClick={handlePickDirectory}
 								disabled={isSaving}
 							>
-								Choose...
+								{__('Choose...')}
 							</Button>
 						</div>
 						{directoryError ? (
@@ -387,13 +399,17 @@ export function SaveSiteModal() {
 						></progress>
 						<p style={{ ...helpTextStyle, marginTop: 4 }}>
 							{savingProgress
-								? `Saving ${savingProgress.files} / ${savingProgress.total} files...`
-								: 'Preparing to save...'}
+								? sprintf(
+										__('Saving %d / %d files...'),
+										savingProgress.files,
+										savingProgress.total
+								  )
+								: __('Preparing to save...')}
 						</p>
 					</div>
 				)}
 				<ModalButtons
-					submitText="Save"
+					submitText={__('Save')}
 					onCancel={handleRequestClose}
 					areDisabled={saveDisabled}
 					areBusy={false}
