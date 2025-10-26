@@ -20,6 +20,7 @@ import { modalSlugs } from '../layout';
 import { setActiveModal } from '../../lib/state/redux/slice-ui';
 import { selectClientBySiteSlug } from '../../lib/state/redux/slice-clients';
 import { randomSiteName } from '../../lib/state/redux/random-site-name';
+import { useI18n } from '../../lib/i18n';
 
 /**
  * Ensures the redux store always has an activeSite value.
@@ -34,6 +35,7 @@ export function EnsurePlaygroundSiteIsSelected({
 }: {
 	children: React.ReactNode;
 }) {
+	const { __ } = useI18n();
 	const siteListingStatus = useAppSelector(
 		(state) => state.sites.opfsSitesLoadingState
 	);
@@ -58,14 +60,14 @@ export function EnsurePlaygroundSiteIsSelected({
 
 	useEffect(() => {
 		if (!opfsSiteStorage) {
-			logger.error('Error loading sites: OPFS not available');
+			logger.error(__('Error loading sites: OPFS not available'));
 			dispatch(OPFSSitesLoaded([]));
 			return;
 		}
 		opfsSiteStorage.list().then(
 			(sites) => dispatch(OPFSSitesLoaded(sites)),
 			(error) => {
-				logger.error('Error loading sites:', error);
+				logger.error(__('Error loading sites:'), error);
 				dispatch(OPFSSitesLoaded([]));
 			}
 		);
@@ -87,7 +89,9 @@ export function EnsurePlaygroundSiteIsSelected({
 				if (!requestedSiteObject) {
 					if (promptIfSiteMissing) {
 						logger.log(
-							'The requested site was not found. Creating a new temporary site.'
+							__(
+								'The requested site was not found. Creating a new temporary site.'
+							)
 						);
 
 						await createNewTemporarySite(
@@ -99,7 +103,9 @@ export function EnsurePlaygroundSiteIsSelected({
 					} else {
 						// @TODO: Notification: 'The requested site was not found. Redirecting to a new temporary site.'
 						logger.log(
-							'The requested site was not found. Redirecting to a new temporary site.'
+							__(
+								'The requested site was not found. Redirecting to a new temporary site.'
+							)
 						);
 						const currentUrl = new URL(window.location.href);
 						currentUrl.searchParams.delete('site-slug');
