@@ -101,7 +101,12 @@
 			"Import": ["Importar"],
 			"Some features may not available because you are offline.": [
 				"Alguns recursos podem não estar disponíveis porque você está offline."
-			]
+			],
+			"Playground toolbar": ["Barra de ferramentas do Playground"],
+			"Close Site Manager": ["Fechar Gerenciador de Sites"],
+			"Open Site Manager": ["Abrir Gerenciador de Sites"],
+			"Edit Playground settings": ["Editar configurações do Playground"],
+			"Playground settings": ["Configurações do Playground"]
 		}
 	}
 }

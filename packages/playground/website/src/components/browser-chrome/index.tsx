@@ -1,8 +1,22 @@
+/**
+ * External dependencies
+ */
 import React from 'react';
+import classNames from 'classnames';
+
+/**
+ * WordPress dependencies
+ */
+import { useMediaQuery } from '@wordpress/compose';
+import { Dropdown, Icon } from '@wordpress/components';
+import { cog } from '@wordpress/icons';
+import { SiteManagerIcon } from '@wp-playground/components';
+
+/**
+ * Internal dependencies
+ */
 import css from './style.module.css';
 import AddressBar from '../address-bar';
-import classNames from 'classnames';
-import { useMediaQuery } from '@wordpress/compose';
 import {
 	useAppSelector,
 	getActiveClientInfo,
@@ -10,13 +24,11 @@ import {
 	useAppDispatch,
 } from '../../lib/state/redux/store';
 import { SyncLocalFilesButton } from '../sync-local-files-button';
-import { Dropdown, Icon } from '@wordpress/components';
 import { Modal } from '../../components/modal';
-import { cog } from '@wordpress/icons';
 import Button from '../button';
 import { ActiveSiteSettingsForm } from '../site-manager/site-settings-form';
 import { setSiteManagerOpen } from '../../lib/state/redux/slice-ui';
-import { SiteManagerIcon } from '@wp-playground/components';
+import { useI18n } from '../../lib/i18n';
 
 interface BrowserChromeProps {
 	children?: React.ReactNode;
@@ -27,6 +39,7 @@ export default function BrowserChrome({
 	children,
 	className,
 }: BrowserChromeProps) {
+	const { __ } = useI18n();
 	const clientInfo = useAppSelector(getActiveClientInfo);
 	const activeSite = useActiveSite();
 	const showAddressBar = !!clientInfo;
@@ -55,7 +68,7 @@ export default function BrowserChrome({
 					className={classNames(css.toolbar, {
 						[css.withSidebarOpen]: siteManagerIsOpen,
 					})}
-					aria-label="Playground toolbar"
+					aria-label={__('Playground toolbar')}
 				>
 					<div className={addressBarClass}>
 						<AddressBar
@@ -71,8 +84,8 @@ export default function BrowserChrome({
 							variant="browser-chrome"
 							aria-label={
 								siteManagerIsOpen
-									? 'Close Site Manager'
-									: 'Open Site Manager'
+									? __('Close Site Manager')
+									: __('Open Site Manager')
 							}
 							aria-pressed={siteManagerIsOpen}
 							className={classNames(css.openSiteManagerButton, {
@@ -94,7 +107,7 @@ export default function BrowserChrome({
 							<>
 								<Button
 									variant="browser-chrome"
-									aria-label="Edit Playground settings"
+									aria-label={__('Edit Playground settings')}
 									onClick={onToggle}
 									aria-expanded={isModalOpen}
 									style={{
@@ -108,7 +121,7 @@ export default function BrowserChrome({
 								{isModalOpen && (
 									<Modal
 										isFullScreen={true}
-										title="Playground settings"
+										title={__('Playground settings')}
 										onRequestClose={closeModal}
 									>
 										<ActiveSiteSettingsForm
@@ -125,7 +138,9 @@ export default function BrowserChrome({
 								renderToggle={({ isOpen, onToggle }) => (
 									<Button
 										variant="browser-chrome"
-										aria-label="Edit Playground settings"
+										aria-label={__(
+											'Edit Playground settings'
+										)}
 										onClick={onToggle}
 										aria-expanded={isOpen}
 										style={{
@@ -147,7 +162,7 @@ export default function BrowserChrome({
 									>
 										<div className={css.headerSection}>
 											<h2 style={{ margin: 0 }}>
-												Playground settings
+												{__('Playground settings')}
 											</h2>
 										</div>
 										<ActiveSiteSettingsForm
