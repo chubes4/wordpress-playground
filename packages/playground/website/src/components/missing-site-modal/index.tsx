@@ -8,8 +8,10 @@ import {
 } from '../../lib/state/redux/store';
 import { setActiveModal } from '../../lib/state/redux/slice-ui';
 import { selectClientInfoBySiteSlug } from '../../lib/state/redux/slice-clients';
+import { useI18n } from '../../lib/i18n';
 
 export function MissingSiteModal() {
+	const { __, sprintf } = useI18n();
 	const dispatch = useAppDispatch();
 	const closeModal = () => dispatch(setActiveModal(null));
 
@@ -27,24 +29,28 @@ export function MissingSiteModal() {
 		return null;
 	}
 
-	// TODO: Improve language for this modal
 	return (
 		<Modal
-			title="Save to browser storage?"
-			contentLabel="This is a dialog window which overlays the main content of the
-				page. It offers the user a choice between using a temporary Playground
-				and a persistent Playground that is saved to browser storage."
+			title={__('Save to browser storage?')}
+			contentLabel={__(
+				'This is a dialog window which overlays the main content of the page. It offers the user a choice between using a temporary Playground and a persistent Playground that is saved to browser storage.'
+			)}
 			isDismissible={false}
 			shouldCloseOnClickOutside={false}
 			onRequestClose={closeModal}
 		>
 			<p>
-				The <b>{activeSite.metadata.name}</b> Playground does not exist,
-				so we loaded a temporary Playground instead.
+				{sprintf(
+					__(
+						'The %s Playground does not exist, so we loaded a temporary Playground instead.'
+					),
+					activeSite.metadata.name
+				)}
 			</p>
 			<p>
-				If you want to preserve your changes, you can save the
-				Playground to browser storage.
+				{__(
+					'If you want to preserve your changes, you can save the Playground to browser storage.'
+				)}
 			</p>
 			{/* Note: We are using row-reverse direction so the secondary
 				button can display first in row orientation and last when
@@ -66,7 +72,7 @@ export function MissingSiteModal() {
 						storage="opfs"
 					>
 						<Button variant="primary">
-							Save Playground to browser storage
+							{__('Save Playground to browser storage')}
 						</Button>
 					</SitePersistButton>
 				</FlexItem>
@@ -83,7 +89,7 @@ export function MissingSiteModal() {
 							closeModal();
 						}}
 					>
-						Keep using a temporary Playground
+						{__('Keep using a temporary Playground')}
 					</Button>
 				</FlexItem>
 			</Flex>
