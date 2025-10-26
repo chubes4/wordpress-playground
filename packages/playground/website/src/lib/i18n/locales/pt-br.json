@@ -1,0 +1,12 @@
+{
+	"domain": "playground-website",
+	"locale_data": {
+		"playground-website": {
+			"": {
+				"domain": "playground-website",
+				"lang": "pt-br",
+				"plural-forms": "nplurals=2; plural=(n > 1);"
+			}
+		}
+	}
+}
