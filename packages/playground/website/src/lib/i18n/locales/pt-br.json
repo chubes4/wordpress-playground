@@ -6,7 +6,102 @@
 				"domain": "playground-website",
 				"lang": "pt-br",
 				"plural-forms": "nplurals=2; plural=(n > 1);"
-			}
+			},
+			"Save to browser storage?": [
+				"Salvar no armazenamento do navegador?"
+			],
+			"This is a dialog window which overlays the main content of the page. It offers the user a choice between using a temporary Playground and a persistent Playground that is saved to browser storage.": [
+				"Esta é uma janela de diálogo que se sobrepõe ao conteúdo principal da página. Ela oferece ao usuário a escolha entre usar um Playground temporário e um Playground persistente que é salvo no armazenamento do navegador."
+			],
+			"The %s Playground does not exist, so we loaded a temporary Playground instead.": [
+				"O Playground %s não existe, então carregamos um Playground temporário."
+			],
+			"If you want to preserve your changes, you can save the Playground to browser storage.": [
+				"Se você deseja preservar suas alterações, pode salvar o Playground no armazenamento do navegador."
+			],
+			"Save Playground to browser storage": [
+				"Salvar Playground no armazenamento do navegador"
+			],
+			"Keep using a temporary Playground": [
+				"Continuar usando um Playground temporário"
+			],
+			"Rename Playground": ["Renomear Playground"],
+			"This is a dialog window which overlays the main content of the page. The modal begins with a heading 2 called \"Rename Playground\". Pressing the Close button will close the modal and bring you back to where you were on the page.": [
+				"Esta é uma janela de diálogo que se sobrepõe ao conteúdo principal da página. O modal começa com um título 2 chamado \"Renomear Playground\". Pressionar o botão Fechar fechará o modal e o levará de volta para onde você estava na página."
+			],
+			"Name": ["Nome"],
+			"e.g. Testing Gutenberg 24.17": ["ex: Testando Gutenberg 24.17"],
+			"Rename": ["Renomear"],
+			"Not available in this browser": ["Não disponível neste navegador"],
+			"Not available on this site": ["Não disponível neste site"],
+			"Directory selection is not supported in this browser.": [
+				"A seleção de diretório não é suportada neste navegador."
+			],
+			"Allow Playground to edit that directory in the browser prompt to continue.": [
+				"Permita que o Playground edite esse diretório no prompt do navegador para continuar."
+			],
+			"Unable to access the selected directory.": [
+				"Não foi possível acessar o diretório selecionado."
+			],
+			"Choose a directory to continue.": [
+				"Escolha um diretório para continuar."
+			],
+			"Saving failed. Please try again.": [
+				"Falha ao salvar. Por favor, tente novamente."
+			],
+			"Save Playground": ["Salvar Playground"],
+			"Playground name": ["Nome do Playground"],
+			"Storage location": ["Local de armazenamento"],
+			"Save in this browser": ["Salvar neste navegador"],
+			"not available": ["não disponível"],
+			"Save to a local directory": ["Salvar em um diretório local"],
+			"Local directory": ["Diretório local"],
+			"Choose a directory...": ["Escolher um diretório..."],
+			"Choose...": ["Escolher..."],
+			"Saving %d / %d files...": ["Salvando %d de %d arquivos..."],
+			"Preparing to save...": ["Preparando para salvar..."],
+			"Save": ["Salvar"],
+			"Oops! There was a problem starting Playground. To figure out what went wrong, please take a look at the error logs provided below. If you see an \"Invalid blueprint error,\" the logs will point out the specific step causing the issue. You can then double-check your blueprint. For more help, you can also": [
+				"Ops! Houve um problema ao iniciar o Playground. Para descobrir o que deu errado, consulte os logs de erro fornecidos abaixo. Se você ver um \"Erro de blueprint inválido\", os logs apontarão a etapa específica que está causando o problema. Você pode então verificar novamente seu blueprint. Para mais ajuda, você também pode"
+			],
+			"visit our documentation.": ["visitar nossa documentação."],
+			"Don't show again": ["Não mostrar novamente"],
+			"Error": ["Erro"],
+			"Submit": ["Enviar"],
+			"Cancel": ["Cancelar"],
+			"Download the current playground as a .zip file": [
+				"Baixar o playground atual como um arquivo .zip"
+			],
+			"Download as .zip": ["Baixar como .zip"],
+			"Restore from .zip": ["Restaurar do .zip"],
+			"Import a .zip file into the current Playground": [
+				"Importar um arquivo .zip para o Playground atual"
+			],
+			"View logs": ["Ver logs"],
+			"Report an error in Playground": ["Reportar um erro no Playground"],
+			"Report error": ["Reportar erro"],
+			"Export WordPress theme, plugin, or wp-content directory to a GitHub repository as a Pull Request.": [
+				"Exportar tema WordPress, plugin ou diretório wp-content para um repositório GitHub como um Pull Request."
+			],
+			"Export to GitHub": ["Exportar para GitHub"],
+			"Import WordPress theme, plugin, or wp-content directory from a GitHub repository.": [
+				"Importar tema WordPress, plugin ou diretório wp-content de um repositório GitHub."
+			],
+			"GitHub repository": ["Repositório GitHub"],
+			"Preview WordPress Core PR": ["Visualizar PR do WordPress Core"],
+			"WordPress Core PR": ["PR do WordPress Core"],
+			"Preview Gutenberg PR.": ["Visualizar PR do Gutenberg."],
+			"Gutenberg PR": ["PR do Gutenberg"],
+			"Unable to import file. Is it a valid WordPress Playground export?": [
+				"Não foi possível importar o arquivo. É uma exportação válida do WordPress Playground?"
+			],
+			"You may replace the current WordPress Playground site with a previously exported one.": [
+				"Você pode substituir o site atual do WordPress Playground por um exportado anteriormente."
+			],
+			"Import": ["Importar"],
+			"Some features may not available because you are offline.": [
+				"Alguns recursos podem não estar disponíveis porque você está offline."
+			]
 		}
 	}
 }
