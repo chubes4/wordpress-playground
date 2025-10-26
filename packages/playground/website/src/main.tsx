@@ -6,14 +6,17 @@ import { Provider } from 'react-redux';
 import store from './lib/state/redux/store';
 import { Layout } from './components/layout';
 import { EnsurePlaygroundSite } from './components/ensure-playground-site';
+import { I18nProvider } from './lib/i18n';
 
 collectWindowErrors(logger);
 
 const root = createRoot(document.getElementById('root')!);
 root.render(
 	<Provider store={store}>
-		<EnsurePlaygroundSite>
-			<Layout />
-		</EnsurePlaygroundSite>
+		<I18nProvider>
+			<EnsurePlaygroundSite>
+				<Layout />
+			</EnsurePlaygroundSite>
+		</I18nProvider>
 	</Provider>
 );
