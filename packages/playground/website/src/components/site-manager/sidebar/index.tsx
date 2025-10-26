@@ -1,5 +1,11 @@
-import css from './style.module.css';
+/**
+ * External dependencies
+ */
 import classNames from 'classnames';
+
+/**
+ * WordPress dependencies
+ */
 import {
 	__experimentalHeading as Heading,
 	NavigableMenu,
@@ -15,6 +21,10 @@ import {
 	Button,
 } from '@wordpress/components';
 import { page, close } from '@wordpress/icons';
+
+/**
+ * Internal dependencies
+ */
 import { ClockIcon, WordPressIcon } from '@wp-playground/components';
 import {
 	setActiveSite,
@@ -33,6 +43,8 @@ import { WordPressPRMenuItem } from '../../toolbar-buttons/wordpress-pr-menu-ite
 import { GutenbergPRMenuItem } from '../../toolbar-buttons/gutenberg-pr-menu-item';
 import { RestoreFromZipMenuItem } from '../../toolbar-buttons/restore-from-zip';
 import { GithubImportMenuItem } from '../../toolbar-buttons/github-import-menu-item';
+import { useI18n } from '../../../lib/i18n';
+import css from './style.module.css';
 
 export function Sidebar({
 	className,
@@ -43,6 +55,7 @@ export function Sidebar({
 	mobileUi?: boolean;
 	afterSiteClick?: (slug: string) => void;
 }) {
+	const { __ } = useI18n();
 	const offline = useAppSelector((state) => state.ui.offline);
 	const storedSites = useAppSelector(selectSortedSites).filter(
 		(site) => site.metadata.storage !== 'none'
@@ -61,19 +74,19 @@ export function Sidebar({
 
 	const resources = [
 		{
-			label: 'Preview WordPress PR',
+			label: __('Preview WordPress PR'),
 			href: '/wordpress.html',
 		},
 		{
-			label: 'More demos',
+			label: __('More demos'),
 			href: '/demos/index.html',
 		},
 		{
-			label: 'Documentation',
+			label: __('Documentation'),
 			href: 'https://wordpress.github.io/wordpress-playground/',
 		},
 		{
-			label: 'GitHub',
+			label: __('GitHub'),
 			href: 'https://github.com/wordpress/wordpress-playground',
 		},
 	];
@@ -116,13 +129,13 @@ export function Sidebar({
 					</svg>
 				</div>
 				<h1 className={css.sidebarTitle} style={{ flexGrow: 1 }}>
-					Playground
+					{__('Playground')}
 				</h1>
 
 				<DropdownMenu
 					className={css.componentsDropdown}
-					icon={<>Import</>}
-					label="Import"
+					icon={<>{__('Import')}</>}
+					label={__('Import')}
 					toggleProps={{
 						className: 'is-primary',
 						style: { paddingLeft: 12, paddingRight: 12 },
@@ -146,7 +159,7 @@ export function Sidebar({
 								disabled={offline}
 							/>
 							<RestoreFromZipMenuItem
-								text="Playground export file (.zip)"
+								text={__('Playground export file (.zip)')}
 								onClose={onClose}
 								disabled={false}
 							/>
@@ -165,7 +178,7 @@ export function Sidebar({
 							redirectTo(PlaygroundRoute.newTemporarySite());
 						}}
 						icon={close}
-						label="Close sidebar"
+						label={__('Close sidebar')}
 						showTooltip={true}
 					/>
 				)}
@@ -186,7 +199,9 @@ export function Sidebar({
 						isSelected={isTemporarySiteSelected}
 						// eslint-disable-next-line jsx-a11y/aria-role
 						role=""
-						title="This is a temporary Playground. Your changes will be lost on page refresh."
+						title={__(
+							'This is a temporary Playground. Your changes will be lost on page refresh.'
+						)}
 						{...(activeSite?.metadata.storage === 'none'
 							? {
 									'aria-current': 'page',
@@ -204,7 +219,7 @@ export function Sidebar({
 								<ClockIcon className={css.sidebarItemLogo} />
 							</Flex>
 							<FlexBlock className={css.sidebarItemSiteName}>
-								Temporary Playground
+								{__('Temporary Playground')}
 							</FlexBlock>
 						</HStack>
 					</MenuItem>
@@ -232,7 +247,7 @@ export function Sidebar({
 								/>
 							</Flex>
 							<FlexBlock className={css.sidebarItemSiteName}>
-								Blueprints Gallery
+								{__('Blueprints Gallery')}
 							</FlexBlock>
 						</HStack>
 					</MenuItem>
@@ -246,7 +261,7 @@ export function Sidebar({
 								css.sidebarListLabel
 							)}
 						>
-							Saved Playgrounds
+							{__('Saved Playgrounds')}
 						</Heading>
 						<MenuGroup className={css.sidebarList}>
 							{storedSites.map((site) => {
@@ -323,7 +338,7 @@ export function Sidebar({
 				className={classNames(css.sidebarSection, css.sidebarFooter)}
 			>
 				<Heading level="2" className={css.sidebarLabel}>
-					Resources
+					{__('Resources')}
 				</Heading>
 				<ItemGroup className={css.sidebarList}>
 					{resources.map((item) => (

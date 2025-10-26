@@ -11,8 +11,10 @@ import { useAppSelector } from '../../lib/state/redux/store';
 import { setActiveModal } from '../../lib/state/redux/slice-ui';
 import { Modal } from '../../components/modal';
 import ModalButtons from '../modal/modal-buttons';
+import { useI18n } from '../../lib/i18n';
 
 export function ErrorReportModal(props: { blueprint: BlueprintV1Declaration }) {
+	const { __ } = useI18n();
 	const activeModal = useAppSelector(
 		(state: PlaygroundReduxState) => state.ui.activeModal
 	);
@@ -97,11 +99,11 @@ export function ErrorReportModal(props: { blueprint: BlueprintV1Declaration }) {
 
 	function getTitle() {
 		if (!submitted) {
-			return 'Report error';
+			return __('Report error');
 		} else if (submitError) {
-			return 'Failed to report the error';
+			return __('Failed to report the error');
 		} else {
-			return 'Thank you for reporting the error';
+			return __('Thank you for reporting the error');
 		}
 	}
 
@@ -109,36 +111,38 @@ export function ErrorReportModal(props: { blueprint: BlueprintV1Declaration }) {
 		if (!submitted) {
 			return (
 				<>
-					Playground crashed because of an error. You can help resolve
-					the issue by sharing the error details with us.
+					{__(
+						'Playground crashed because of an error. You can help resolve the issue by sharing the error details with us.'
+					)}
 				</>
 			);
 		} else if (submitError) {
 			return (
 				<>
-					We were unable to submit the error report. Please try again
-					or open an{' '}
+					{__(
+						'We were unable to submit the error report. Please try again or open an '
+					)}
 					<a
 						href="https://github.com/WordPress/wordpress-playground/issues/"
 						target="_blank"
 						rel="noopener noreferrer"
 					>
-						issue on GitHub.
+						{__('issue on GitHub.')}
 					</a>
 				</>
 			);
 		} else {
 			return (
 				<>
-					Your report has been submitted to the{' '}
+					{__('Your report has been submitted to the ')}
 					<a
 						href="https://wordpress.slack.com/archives/C06Q5DCKZ3L"
 						target="_blank"
 						rel="noopener noreferrer"
 					>
-						Making WordPress #playground-logs Slack channel
-					</a>{' '}
-					and will be reviewed by the team.
+						{__('Making WordPress #playground-logs Slack channel')}
+					</a>
+					{__(' and will be reviewed by the team.')}
 				</>
 			);
 		}
@@ -160,19 +164,25 @@ export function ErrorReportModal(props: { blueprint: BlueprintV1Declaration }) {
 			{showForm() && (
 				<>
 					<TextareaControl
-						label="How can we recreate this error?"
-						help="Describe what caused the error and how can we recreate it."
+						label={__('How can we recreate this error?')}
+						help={__(
+							'Describe what caused the error and how can we recreate it.'
+						)}
 						value={text}
 						onChange={setText}
 						required={true}
 					/>
 					<TextareaControl
-						label="Logs"
+						label={__('Logs')}
 						value={logs}
 						onChange={setLogs}
 					/>
 
-					<TextControl label="Url" value={url} onChange={setUrl} />
+					<TextControl
+						label={__('Url')}
+						value={url}
+						onChange={setUrl}
+					/>
 
 					<ModalButtons
 						areBusy={loading}

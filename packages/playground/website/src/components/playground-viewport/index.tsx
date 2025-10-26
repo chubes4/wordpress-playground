@@ -19,6 +19,7 @@ import {
 	selectTemporarySites,
 } from '../../lib/state/redux/slice-sites';
 import classNames from 'classnames';
+import { useI18n } from '../../lib/i18n';
 
 export const supportedDisplayModes = [
 	'browser-full-screen',
@@ -108,6 +109,8 @@ export const KeepAliveTemporarySitesViewport = () => {
 	 * We're talking about maybe a 100 empty divs in an extreme scenario. That's nothing.
 	 */
 	const [slugsSeenSoFar, setSlugsSeenSoFar] = useState<string[]>([]);
+	const { __ } = useI18n();
+
 	useEffect(() => {
 		setSlugsSeenSoFar((prev) => [
 			...prev,
@@ -144,8 +147,9 @@ export const KeepAliveTemporarySitesViewport = () => {
 						>
 							<h2>No site is selected</h2>
 							<p>
-								Select a site from the site manager to explore
-								Playground.
+								{__(
+									'Select a site from the site manager to explore WordPress Playground.'
+								)}
 							</p>
 						</div>
 					</div>
@@ -176,6 +180,7 @@ export const JustViewport = function JustViewport({
 	const site = useAppSelector((state) => selectSiteBySlug(state, siteSlug))!;
 
 	const dispatch = useAppDispatch();
+	const { __ } = useI18n();
 	const runtimeConfigString = JSON.stringify(
 		site.metadata.runtimeConfiguration
 	);
@@ -214,7 +219,9 @@ export const JustViewport = function JustViewport({
 	return (
 		<iframe
 			key={siteSlug}
-			title="WordPress Playground wrapper (the actual WordPress site is in another, nested iframe)"
+			title={__(
+				'WordPress Playground wrapper (the actual WordPress site is in another, nested iframe)'
+			)}
 			className={classNames('playground-viewport', css.fullSize)}
 			ref={iframeRef}
 		/>
@@ -229,6 +236,8 @@ function SiteErrorMessage({
 	siteSlug: string;
 }) {
 	const dispatch = useAppDispatch();
+	const { __ } = useI18n();
+
 	if (
 		error === 'directory-handle-not-found-in-indexeddb' ||
 		error === 'directory-handle-permission-denied'
@@ -244,22 +253,22 @@ function SiteErrorMessage({
 		 */
 		return (
 			<>
-				<h1>Local directory permissions expired</h1>
+				<h1>{__('Local directory permissions expired')}</h1>
 				<p>
-					You previously granted WordPress Playground access to your
-					local directory, but the browser no longer allows Playground
-					to access it.
+					{__(
+						'You previously granted WordPress Playground access to your local directory, but the browser no longer allows Playground to access it.'
+					)}
 				</p>
 				<p>
-					There's no way to recover from this today. We are working on
-					a way of selecting the local directory again. Stay tuned,
-					and if you urgently need to work with this site, tell us at{' '}
+					{__(
+						"There's no way to recover from this today. We are working on a way of selecting the local directory again. Stay tuned, and if you urgently need to work with this site, tell us at "
+					)}
 					<a
 						target="_blank"
 						rel="noopener noreferrer"
 						href="https://github.com/WordPress/wordpress-playground/issues/1746"
 					>
-						GitHub
+						{__('GitHub')}
 					</a>
 					.
 				</p>
@@ -270,12 +279,13 @@ function SiteErrorMessage({
 	if (error === 'directory-handle-directory-does-not-exist') {
 		return (
 			<>
-				<h1>Local directory was deleted</h1>
+				<h1>{__('Local directory was deleted')}</h1>
 				<p>
-					It seems like you deleted the local directory you previously
-					selected.
+					{__(
+						'It seems like you deleted the local directory you previously selected.'
+					)}
 				</p>
-				<p>Unfortunately, this site won't work anymore.</p>
+				<p>{__("Unfortunately, this site won't work anymore.")}</p>
 				<Button
 					className={css.actionButton}
 					variant="primary"
@@ -284,7 +294,7 @@ function SiteErrorMessage({
 						dispatch(removeClientInfo(siteSlug));
 					}}
 				>
-					Delete this site and try again
+					{__('Delete this site and try again')}
 				</Button>
 			</>
 		);
@@ -293,15 +303,16 @@ function SiteErrorMessage({
 	if (error === 'github-artifact-expired') {
 		return (
 			<>
-				<h1>This artifact has expired</h1>
+				<h1>{__('This artifact has expired')}</h1>
 				<p>
-					The requested GitHub artifactis no longer available. GitHub
-					only serves PR build artifacts for a limited time.
+					{__(
+						'The requested GitHub artifactis no longer available. GitHub only serves PR build artifacts for a limited time.'
+					)}
 				</p>
 				<p>
-					If you want to preview that PR, you will need to re-run
-					GitHub workflows in that PR. One way to do that is by
-					pushing an empty commit.
+					{__(
+						'If you want to preview that PR, you will need to re-run GitHub workflows in that PR. One way to do that is by pushing an empty commit.'
+					)}
 				</p>
 				<Button
 					className={css.actionButton}
@@ -313,7 +324,7 @@ function SiteErrorMessage({
 						window.location.href = url.toString();
 					}}
 				>
-					Restart Playground without that PR
+					{__('Restart Playground without that PR')}
 				</Button>
 			</>
 		);
@@ -321,8 +332,12 @@ function SiteErrorMessage({
 
 	return (
 		<>
-			<h1>Something went wrong</h1>
-			<p>An error occurred while loading your site. Please try again.</p>
+			<h1>{__('Something went wrong')}</h1>
+			<p>
+				{__(
+					'An error occurred while loading your site. Please try again.'
+				)}
+			</p>
 			<Button
 				className={css.actionButton}
 				variant="primary"
@@ -330,7 +345,7 @@ function SiteErrorMessage({
 					window.location.reload();
 				}}
 			>
-				Reload the browser tab to try again
+				{__('Reload the browser tab to try again')}
 			</Button>
 		</>
 	);

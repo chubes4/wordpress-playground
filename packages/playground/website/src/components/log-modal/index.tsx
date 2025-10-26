@@ -11,8 +11,10 @@ import type {
 } from '../../lib/state/redux/store';
 import { useDispatch, useSelector } from 'react-redux';
 import { setActiveModal } from '../../lib/state/redux/slice-ui';
+import { useI18n } from '../../lib/i18n';
 
 export function LogModal(props: { description?: JSX.Element; title?: string }) {
+	const { __ } = useI18n();
 	const activeModal = useSelector(
 		(state: PlaygroundReduxState) => state.ui.activeModal
 	);
@@ -23,7 +25,7 @@ export function LogModal(props: { description?: JSX.Element; title?: string }) {
 	}
 
 	return (
-		<Modal title={props.title || 'Error Logs'} onRequestClose={onClose}>
+		<Modal title={props.title || __('Error Logs')} onRequestClose={onClose}>
 			<div>{props.description}</div>
 			<SiteLogs key={activeModal} className={css.logsInsideModal} />
 		</Modal>
@@ -31,6 +33,7 @@ export function LogModal(props: { description?: JSX.Element; title?: string }) {
 }
 
 export function SiteLogs({ className }: { className?: string }) {
+	const { __ } = useI18n();
 	const [logs, setLogs] = useState<string[]>([]);
 	const [searchTerm, setSearchTerm] = useState('');
 
@@ -67,8 +70,8 @@ export function SiteLogs({ className }: { className?: string }) {
 		<div className={classNames(css.logsComponent, className)}>
 			{logs.length > 0 ? (
 				<TextControl
-					aria-label="Search"
-					placeholder="Search logs"
+					aria-label={__('Search')}
+					placeholder={__('Search logs')}
 					value={searchTerm}
 					onChange={setSearchTerm}
 					autoFocus={true}
@@ -80,15 +83,16 @@ export function SiteLogs({ className }: { className?: string }) {
 					<main className={css.logList}>{logList()}</main>
 				) : logs.length > 0 ? (
 					<div className={css.logEmptyPlaceholder}>
-						No matching logs found.
+						{__('No matching logs found.')}
 					</div>
 				) : (
 					<div>
-						Error logs for Playground, WordPress, and PHP will show
-						up here when something goes wrong.
+						{__(
+							'Error logs for Playground, WordPress, and PHP will show up here when something goes wrong.'
+						)}
 						<br />
 						<br />
-						No problems so far – yay! 🎉
+						{__('No problems so far – yay! 🎉')}
 					</div>
 				)}
 			</div>
