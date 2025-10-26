@@ -6,7 +6,294 @@
 				"domain": "playground-website",
 				"lang": "es",
 				"plural-forms": "nplurals=2; plural=(n != 1);"
-			}
+			},
+			"Save to browser storage?": [
+				"¿Guardar en el almacenamiento del navegador?"
+			],
+			"This is a dialog window which overlays the main content of the page. It offers the user a choice between using a temporary Playground and a persistent Playground that is saved to browser storage.": [
+				"Esta es una ventana de diálogo que se superpone al contenido principal de la página. Ofrece al usuario la opción de usar un Playground temporal o un Playground persistente que se guarda en el almacenamiento del navegador."
+			],
+			"The %s Playground does not exist, so we loaded a temporary Playground instead.": [
+				"El Playground %s no existe, así que cargamos un Playground temporal en su lugar."
+			],
+			"If you want to preserve your changes, you can save the Playground to browser storage.": [
+				"Si desea conservar sus cambios, puede guardar el Playground en el almacenamiento del navegador."
+			],
+			"Save Playground to browser storage": [
+				"Guardar Playground en el almacenamiento del navegador"
+			],
+			"Keep using a temporary Playground": [
+				"Seguir usando un Playground temporal"
+			],
+			"Rename Playground": ["Renombrar Playground"],
+			"This is a dialog window which overlays the main content of the page. The modal begins with a heading 2 called \"Rename Playground\". Pressing the Close button will close the modal and bring you back to where you were on the page.": [
+				"Esta es una ventana de diálogo que se superpone al contenido principal de la página. El modal comienza con un encabezado 2 llamado \"Renombrar Playground\". Al presionar el botón Cerrar se cerrará el modal y lo llevará de vuelta a donde estaba en la página."
+			],
+			"Name": ["Nombre"],
+			"e.g. Testing Gutenberg 24.17": ["ej. Probando Gutenberg 24.17"],
+			"Rename": ["Renombrar"],
+			"Not available in this browser": [
+				"No disponible en este navegador"
+			],
+			"Not available on this site": ["No disponible en este sitio"],
+			"Directory selection is not supported in this browser.": [
+				"La selección de directorios no está soportada en este navegador."
+			],
+			"Allow Playground to edit that directory in the browser prompt to continue.": [
+				"Permita que Playground edite ese directorio en la ventana del navegador para continuar."
+			],
+			"Unable to access the selected directory.": [
+				"No se puede acceder al directorio seleccionado."
+			],
+			"Choose a directory to continue.": [
+				"Elija un directorio para continuar."
+			],
+			"Saving failed. Please try again.": [
+				"Error al guardar. Por favor, inténtelo de nuevo."
+			],
+			"Save Playground": ["Guardar Playground"],
+			"Playground name": ["Nombre del Playground"],
+			"Storage location": ["Ubicación de almacenamiento"],
+			"Save in this browser": ["Guardar en este navegador"],
+			"not available": ["no disponible"],
+			"Save to a local directory": ["Guardar en un directorio local"],
+			"Local directory": ["Directorio local"],
+			"Choose a directory...": ["Elegir un directorio..."],
+			"Choose...": ["Elegir..."],
+			"Saving %d / %d files...": ["Guardando %d de %d archivos..."],
+			"Preparing to save...": ["Preparando para guardar..."],
+			"Save": ["Guardar"],
+			"Oops! There was a problem starting Playground. To figure out what went wrong, please take a look at the error logs provided below. If you see an \"Invalid blueprint error,\" the logs will point out the specific step causing the issue. You can then double-check your blueprint. For more help, you can also": [
+				"¡Ups! Hubo un problema al iniciar Playground. Para averiguar qué salió mal, consulte los registros de errores que se proporcionan a continuación. Si ve un \"Error de blueprint inválido\", los registros señalarán el paso específico que está causando el problema. Luego puede verificar su blueprint. Para obtener más ayuda, también puede"
+			],
+			"visit our documentation.": ["visitar nuestra documentación."],
+			"Don't show again": ["No mostrar de nuevo"],
+			"Error": ["Error"],
+			"Submit": ["Enviar"],
+			"Cancel": ["Cancelar"],
+			"Download the current playground as a .zip file": [
+				"Descargar el playground actual como un archivo .zip"
+			],
+			"Download as .zip": ["Descargar como .zip"],
+			"Restore from .zip": ["Restaurar desde .zip"],
+			"Import a .zip file into the current Playground": [
+				"Importar un archivo .zip al Playground actual"
+			],
+			"View logs": ["Ver registros"],
+			"Report an error in Playground": [
+				"Reportar un error en Playground"
+			],
+			"Report error": ["Reportar error"],
+			"Export WordPress theme, plugin, or wp-content directory to a GitHub repository as a Pull Request.": [
+				"Exportar tema de WordPress, plugin o directorio wp-content a un repositorio de GitHub como un Pull Request."
+			],
+			"Export to GitHub": ["Exportar a GitHub"],
+			"Import WordPress theme, plugin, or wp-content directory from a GitHub repository.": [
+				"Importar tema de WordPress, plugin o directorio wp-content desde un repositorio de GitHub."
+			],
+			"GitHub repository": ["Repositorio de GitHub"],
+			"Preview WordPress Core PR": [
+				"Vista previa del PR de WordPress Core"
+			],
+			"WordPress Core PR": ["PR de WordPress Core"],
+			"Preview Gutenberg PR.": ["Vista previa del PR de Gutenberg."],
+			"Gutenberg PR": ["PR de Gutenberg"],
+			"Unable to import file. Is it a valid WordPress Playground export?": [
+				"No se puede importar el archivo. ¿Es una exportación válida de WordPress Playground?"
+			],
+			"You may replace the current WordPress Playground site with a previously exported one.": [
+				"Puede reemplazar el sitio actual de WordPress Playground con uno exportado previamente."
+			],
+			"Import": ["Importar"],
+			"Some features may not available because you are offline.": [
+				"Algunas funciones pueden no estar disponibles porque está sin conexión."
+			],
+			"Playground toolbar": ["Barra de herramientas de Playground"],
+			"Close Site Manager": ["Cerrar Gestor de Sitios"],
+			"Open Site Manager": ["Abrir Gestor de Sitios"],
+			"Edit Playground settings": ["Editar configuración de Playground"],
+			"Playground settings": ["Configuración de Playground"],
+			"Playground": ["Playground"],
+			"Close sidebar": ["Cerrar barra lateral"],
+			"This is a temporary Playground. Your changes will be lost on page refresh.": [
+				"Este es un Playground temporal. Sus cambios se perderán al actualizar la página."
+			],
+			"Temporary Playground": ["Playground Temporal"],
+			"Blueprints Gallery": ["Galería de Blueprints"],
+			"Saved Playgrounds": ["Playgrounds Guardados"],
+			"Resources": ["Recursos"],
+			"More demos": ["Más demos"],
+			"Documentation": ["Documentación"],
+			"GitHub": ["GitHub"],
+			"Playground export file (.zip)": [
+				"Archivo de exportación de Playground (.zip)"
+			],
+			"Files": ["Archivos"],
+			"New File": ["Nuevo Archivo"],
+			"Create new file": ["Crear nuevo archivo"],
+			"New Folder": ["Nueva Carpeta"],
+			"Create new folder": ["Crear nueva carpeta"],
+			"File too large to open (>1MB).": [
+				"Archivo demasiado grande para abrir (>1MB)."
+			],
+			"Download %s": ["Descargar %s"],
+			"Binary file. Cannot be edited.": [
+				"Archivo binario. No se puede editar."
+			],
+			"Could not open file.": ["No se pudo abrir el archivo."],
+			"Could not save changes. Try again.": [
+				"No se pudieron guardar los cambios. Inténtelo de nuevo."
+			],
+			"Start this Playground to browse and edit its files.": [
+				"Inicie este Playground para navegar y editar sus archivos."
+			],
+			"Hide files": ["Ocultar archivos"],
+			"Browse files": ["Explorar archivos"],
+			"Browse files under %s": ["Explorar archivos en %s"],
+			"Select a file to view or edit its contents.": [
+				"Seleccione un archivo para ver o editar su contenido."
+			],
+			"Saving…": ["Guardando…"],
+			"Saved": ["Guardado"],
+			"Save failed": ["Error al guardar"],
+			"Are you sure you want to delete the site '%s'?": [
+				"¿Está seguro de que desea eliminar el sitio '%s'?"
+			],
+			"Back to sites list": ["Volver a la lista de sitios"],
+			"Saved in a local directory": ["Guardado en un directorio local"],
+			"Saved in this browser %s": ["Guardado en este navegador %s"],
+			"Open site": ["Abrir sitio"],
+			"WP Admin": ["Administrador de WP"],
+			"Homepage": ["Página de inicio"],
+			"Additional actions": ["Acciones adicionales"],
+			"Delete this Playground": ["Eliminar este Playground"],
+			"Delete": ["Eliminar"],
+			"View Blueprint": ["Ver Blueprint"],
+			"Settings": ["Configuración"],
+			"File browser": ["Explorador de archivos"],
+			"Logs": ["Registros"],
+			"Loading file browser...": ["Cargando explorador de archivos..."],
+			"Stored Playgrounds have limited configuration options.": [
+				"Los Playgrounds almacenados tienen opciones de configuración limitadas."
+			],
+			"Save & Reload": ["Guardar y Recargar"],
+			"URL to visit in the WordPress site, like\"/wp-admin\"": [
+				"URL para visitar en el sitio de WordPress, como \"/wp-admin\""
+			],
+			"Error loading sites: OPFS not available": [
+				"Error al cargar sitios: OPFS no disponible"
+			],
+			"Error loading sites:": ["Error al cargar sitios:"],
+			"The requested site was not found. Creating a new temporary site.": [
+				"El sitio solicitado no fue encontrado. Creando un nuevo sitio temporal."
+			],
+			"The requested site was not found. Redirecting to a new temporary site.": [
+				"El sitio solicitado no fue encontrado. Redirigiendo a un nuevo sitio temporal."
+			],
+			"Failed to report the error": ["Error al reportar el error"],
+			"Thank you for reporting the error": [
+				"Gracias por reportar el error"
+			],
+			"Playground crashed because of an error. You can help resolve the issue by sharing the error details with us.": [
+				"Playground falló debido a un error. Puede ayudar a resolver el problema compartiendo los detalles del error con nosotros."
+			],
+			"We were unable to submit the error report. Please try again or open an ": [
+				"No pudimos enviar el informe de error. Por favor, inténtelo de nuevo o abra un "
+			],
+			"issue on GitHub.": ["issue en GitHub."],
+			"Your report has been submitted to the ": [
+				"Su informe ha sido enviado al "
+			],
+			"Making WordPress #playground-logs Slack channel": [
+				"canal de Slack #playground-logs de Making WordPress"
+			],
+			" and will be reviewed by the team.": [
+				" y será revisado por el equipo."
+			],
+			"How can we recreate this error?": [
+				"¿Cómo podemos recrear este error?"
+			],
+			"Describe what caused the error and how can we recreate it.": [
+				"Describa qué causó el error y cómo podemos recrearlo."
+			],
+			"Url": ["URL"],
+			"File imported! This Playground instance has been updated. Refreshing now.": [
+				"¡Archivo importado! Esta instancia de Playground ha sido actualizada. Actualizando ahora."
+			],
+			"Import Playground": ["Importar Playground"],
+			"This is a dialog window which overlays the main content of the page. The modal begins with a heading 2 called \"Import Playground\". Pressing the Close Import Window will close the modal and bring you back to where you were on the page.": [
+				"Esta es una ventana de diálogo que se superpone al contenido principal de la página. El modal comienza con un encabezado 2 llamado \"Importar Playground\". Al presionar el botón Cerrar Ventana de Importación se cerrará el modal y lo llevará de vuelta a donde estaba en la página."
+			],
+			"Error Logs": ["Registros de Error"],
+			"Search": ["Buscar"],
+			"Search logs": ["Buscar registros"],
+			"No matching logs found.": [
+				"No se encontraron registros coincidentes."
+			],
+			"Error logs for Playground, WordPress, and PHP will show up here when something goes wrong.": [
+				"Los registros de error de Playground, WordPress y PHP aparecerán aquí cuando algo salga mal."
+			],
+			"No problems so far – yay! 🎉": [
+				"¡No hay problemas hasta ahora – hurra! 🎉"
+			],
+			"Select a site from the site manager to explore WordPress Playground.": [
+				"Seleccione un sitio del gestor de sitios para explorar WordPress Playground."
+			],
+			"WordPress Playground wrapper (the actual WordPress site is in another, nested iframe)": [
+				"Contenedor de WordPress Playground (el sitio de WordPress real está en otro iframe anidado)"
+			],
+			"Local directory permissions expired": [
+				"Permisos del directorio local expirados"
+			],
+			"You previously granted WordPress Playground access to your local directory, but the browser no longer allows Playground to access it.": [
+				"Previamente concedió acceso a WordPress Playground a su directorio local, pero el navegador ya no permite que Playground acceda a él."
+			],
+			"There's no way to recover from this today. We are working on a way of selecting the local directory again. Stay tuned, and if you urgently need to work with this site, tell us at ": [
+				"No hay forma de recuperarse de esto hoy. Estamos trabajando en una forma de seleccionar el directorio local nuevamente. Permanezca atento y, si necesita urgentemente trabajar con este sitio, avísenos en "
+			],
+			"Local directory was deleted": [
+				"El directorio local fue eliminado"
+			],
+			"It seems like you deleted the local directory you previously selected.": [
+				"Parece que eliminó el directorio local que seleccionó anteriormente."
+			],
+			"Unfortunately, this site won't work anymore.": [
+				"Desafortunadamente, este sitio ya no funcionará."
+			],
+			"Delete this site and try again": [
+				"Eliminar este sitio e intentar de nuevo"
+			],
+			"This artifact has expired": ["Este artefacto ha expirado"],
+			"The requested GitHub artifactis no longer available. GitHub only serves PR build artifacts for a limited time.": [
+				"El artefacto de GitHub solicitado ya no está disponible. GitHub solo sirve artefactos de compilación de PR por un tiempo limitado."
+			],
+			"If you want to preview that PR, you will need to re-run GitHub workflows in that PR. One way to do that is by pushing an empty commit.": [
+				"Si desea obtener una vista previa de ese PR, deberá volver a ejecutar los flujos de trabajo de GitHub en ese PR. Una forma de hacerlo es enviando un commit vacío."
+			],
+			"Restart Playground without that PR": [
+				"Reiniciar Playground sin ese PR"
+			],
+			"Something went wrong": ["Algo salió mal"],
+			"An error occurred while loading your site. Please try again.": [
+				"Ocurrió un error al cargar su sitio. Por favor, inténtelo de nuevo."
+			],
+			"Reload the browser tab to try again": [
+				"Recargue la pestaña del navegador para intentar de nuevo"
+			],
+			"Syncing...": ["Sincronizando..."],
+			"Sync local files": ["Sincronizar archivos locales"],
+			"Local": ["Local"],
+			"Browser": ["Navegador"],
+			"Destructive action!": ["¡Acción destructiva!"],
+			"Applying these settings will reset the WordPress site to its initial state.": [
+				"Aplicar estas configuraciones restablecerá el sitio de WordPress a su estado inicial."
+			],
+			"Apply Settings & Reset Playground": [
+				"Aplicar Configuración y Restablecer Playground"
+			],
+			"There has been an error. Please try again.": [
+				"Ha ocurrido un error. Por favor, inténtelo de nuevo."
+			]
 		}
 	}
 }
