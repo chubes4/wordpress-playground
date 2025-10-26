@@ -25,7 +25,7 @@ export const DEFAULT_LOCALE = 'en';
 export const SUPPORTED_LOCALES = [
 	'en', // English
 	'es', // Spanish
-	'pt-br', // Portuguese (Brazil)
+	'pt', // Portuguese
 	'ja', // Japanese
 ] as const;
 
@@ -40,7 +40,7 @@ export const LOCALE_METADATA: Record<
 > = {
 	en: { name: 'English', nativeName: 'English' },
 	es: { name: 'Spanish', nativeName: 'Español' },
-	'pt-br': { name: 'Portuguese (Brazil)', nativeName: 'Português (Brasil)' },
+	pt: { name: 'Portuguese', nativeName: 'Português' },
 	ja: { name: 'Japanese', nativeName: '日本語' },
 };
 
@@ -124,39 +124,66 @@ export function getBrowserLocale(): SupportedLocale {
  * Converts WordPress locale format (e.g., 'pt_BR') to our format (e.g., 'pt-br').
  */
 function normalizeLocaleString(locale: string): string {
-	return locale.toLowerCase().replace('_', '-');
+	return locale.toLowerCase().replace(/_/g, '-');
+}
+
+/**
+ * Match a locale string to a supported locale, with fallback to base language.
+ * Examples:
+ *   - 'pt-pt' -> 'pt'
+ *   - 'pt-br' -> 'pt'
+ *   - 'es-mx' -> 'es'
+ *   - 'es-es' -> 'es'
+ */
+function matchSupportedLocale(locale: string): SupportedLocale | null {
+	const normalized = normalizeLocaleString(locale);
+
+	// Try exact match first
+	if (isSupportedLocale(normalized)) {
+		return normalized;
+	}
+
+	// Try base language (e.g., 'pt' from 'pt-pt')
+	const baseLang = normalized.split('-')[0];
+	if (isSupportedLocale(baseLang)) {
+		return baseLang;
+	}
+
+	return null;
 }
 
 /**
  * Get locale from URL parameter or storage.
  */
 export function getInitialLocale(): SupportedLocale {
-	// Check URL parameter first
 	if (typeof window !== 'undefined') {
 		const urlParams = new URLSearchParams(window.location.search);
 
 		// Check 'locale' parameter
 		const urlLocale = urlParams.get('locale');
 		if (urlLocale) {
-			const normalized = normalizeLocaleString(urlLocale);
-			if (isSupportedLocale(normalized)) {
-				return normalized;
+			const matched = matchSupportedLocale(urlLocale);
+			if (matched) {
+				return matched;
 			}
 		}
 
 		// Check 'language' parameter (WordPress format like 'pt_BR')
 		const languageParam = urlParams.get('language');
 		if (languageParam) {
-			const normalized = normalizeLocaleString(languageParam);
-			if (isSupportedLocale(normalized)) {
-				return normalized;
+			const matched = matchSupportedLocale(languageParam);
+			if (matched) {
+				return matched;
 			}
 		}
 
-		// Check localStorage
-		const storedLocale = localStorage.getItem('playground-locale');
-		if (storedLocale && isSupportedLocale(storedLocale)) {
-			return storedLocale;
+		// Only check localStorage if no URL parameters were provided
+		// This ensures URL parameters always take precedence
+		if (!urlLocale && !languageParam) {
+			const storedLocale = localStorage.getItem('playground-locale');
+			if (storedLocale && isSupportedLocale(storedLocale)) {
+				return storedLocale;
+			}
 		}
 	}
 
