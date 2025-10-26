@@ -150,6 +150,7 @@
 		"@wordpress/core-data": "7.4.0",
 		"@wordpress/data": "10.4.0",
 		"@wordpress/element": "6.4.0",
+		"@wordpress/i18n": "5.4.0",
 		"@wordpress/notices": "5.4.0",
 		"chalk": "5.2.0",
 		"clsx": "^1.2.1",
