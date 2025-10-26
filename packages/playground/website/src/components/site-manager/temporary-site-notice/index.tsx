@@ -33,7 +33,7 @@ export function TemporarySiteNotice({
 		>
 			<Flex direction="row" gap={2} expanded={true}>
 				<FlexItem>
-					<b>{__('This is a temporary Playground.')}</b>
+					<b>{__('This is a temporary Playground.')}</b>{' '}
 					{__('Your changes will be lost on page refresh.')}
 				</FlexItem>
 				<FlexItem>
