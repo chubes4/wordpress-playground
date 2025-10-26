@@ -5,6 +5,7 @@ import { useState } from 'react';
 import classNames from 'classnames';
 import { usePlaygroundClient } from '../../../lib/use-playground-client';
 import { useActiveSite } from '../../../lib/state/redux/store';
+import { useI18n } from '../../../lib/i18n';
 
 export function TemporarySiteNotice({
 	isDismissible = false,
@@ -19,18 +20,21 @@ export function TemporarySiteNotice({
 	if (isDismissed) {
 		return null;
 	}
+	const { __ } = useI18n();
 	return (
 		<Notice
 			className={classNames(css.siteNotice, className)}
-			spokenMessage="This is a temporary Playground. Your changes will be lost on page refresh."
+			spokenMessage={__(
+				'This is a temporary Playground. Your changes will be lost on page refresh.'
+			)}
 			status="info"
 			isDismissible={isDismissible}
 			onDismiss={() => setIsDismissed(true)}
 		>
 			<Flex direction="row" gap={2} expanded={true}>
 				<FlexItem>
-					<b>This is a temporary Playground.</b> Your changes will be
-					lost on page refresh.
+					<b>{__('This is a temporary Playground.')}</b>
+					{__('Your changes will be lost on page refresh.')}
 				</FlexItem>
 				<FlexItem>
 					<SitePersistButton siteSlug={site.slug}>
@@ -39,7 +43,7 @@ export function TemporarySiteNotice({
 							disabled={!playground}
 							aria-label="Save site locally"
 						>
-							Save
+							{__('Save')}
 						</Button>
 					</SitePersistButton>
 				</FlexItem>

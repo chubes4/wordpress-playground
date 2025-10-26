@@ -4,11 +4,13 @@ import {
 	getActiveClientInfo,
 	useAppSelector,
 } from '../../lib/state/redux/store';
+import { useI18n } from '../../lib/i18n';
 
 export function SyncLocalFilesButton() {
 	const { client, url, opfsMountDescriptor } =
 		useAppSelector(getActiveClientInfo) || {};
 	const [isSyncing, setIsSyncing] = useState(false);
+	const { __ } = useI18n();
 	return (
 		<Button
 			variant="browser-chrome"
@@ -30,7 +32,7 @@ export function SyncLocalFilesButton() {
 				await client!.goTo(url!);
 			}}
 		>
-			{isSyncing ? 'Syncing...' : 'Sync local files'}
+			{isSyncing ? __('Syncing...') : __('Sync local files')}
 		</Button>
 	);
 }
