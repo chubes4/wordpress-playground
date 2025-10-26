@@ -1,5 +1,6 @@
 import { Button, Flex } from '@wordpress/components';
 import React from 'react';
+import { useI18n } from '../../lib/i18n';
 import css from './style.module.css';
 
 interface ModalButtonsProps {
@@ -11,13 +12,16 @@ interface ModalButtonsProps {
 	style?: React.CSSProperties;
 }
 export default function ModalButtons({
-	submitText = 'Submit',
+	submitText,
 	areDisabled = false,
 	areBusy,
 	onCancel,
 	onSubmit,
 	style,
 }: ModalButtonsProps) {
+	const { __ } = useI18n();
+	const defaultSubmitText = __('Submit');
+
 	return (
 		<Flex justify="end" className={css.modalButtons} style={style}>
 			<Button
@@ -27,7 +31,7 @@ export default function ModalButtons({
 				variant="link"
 				onClick={onCancel}
 			>
-				Cancel
+				{__('Cancel')}
 			</Button>
 			<Button
 				type="submit"
@@ -36,7 +40,7 @@ export default function ModalButtons({
 				variant="primary"
 				onClick={onSubmit}
 			>
-				{submitText}
+				{submitText || defaultSubmitText}
 			</Button>
 		</Flex>
 	);
