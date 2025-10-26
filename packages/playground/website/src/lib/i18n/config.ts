@@ -67,10 +67,19 @@ export async function initializeLocale(locale: SupportedLocale): Promise<void> {
 		// Dynamically import the locale data
 		const localeData = await import(`./locales/${locale}.json`);
 
+		console.log(`[i18n] Loading locale: ${locale}`);
+		console.log('[i18n] Locale data:', localeData.default);
+
 		// Register the locale data with WordPress i18n
-		setLocaleData(localeData.default, TEXT_DOMAIN);
+		// setLocaleData expects the locale_data property from the Jed format
+		setLocaleData(localeData.default.locale_data[TEXT_DOMAIN], TEXT_DOMAIN);
+
+		console.log(`[i18n] Successfully loaded ${locale} translations`);
 	} catch (error) {
-		console.warn(`Failed to load locale data for ${locale}:`, error);
+		console.error(
+			`[i18n] Failed to load locale data for ${locale}:`,
+			error
+		);
 		// Fall back to default locale (English) on error
 	}
 }
@@ -111,15 +120,37 @@ export function getBrowserLocale(): SupportedLocale {
 }
 
 /**
+ * Normalize locale string to match our supported format.
+ * Converts WordPress locale format (e.g., 'pt_BR') to our format (e.g., 'pt-br').
+ */
+function normalizeLocaleString(locale: string): string {
+	return locale.toLowerCase().replace('_', '-');
+}
+
+/**
  * Get locale from URL parameter or storage.
  */
 export function getInitialLocale(): SupportedLocale {
 	// Check URL parameter first
 	if (typeof window !== 'undefined') {
 		const urlParams = new URLSearchParams(window.location.search);
+
+		// Check 'locale' parameter
 		const urlLocale = urlParams.get('locale');
-		if (urlLocale && isSupportedLocale(urlLocale)) {
-			return urlLocale;
+		if (urlLocale) {
+			const normalized = normalizeLocaleString(urlLocale);
+			if (isSupportedLocale(normalized)) {
+				return normalized;
+			}
+		}
+
+		// Check 'language' parameter (WordPress format like 'pt_BR')
+		const languageParam = urlParams.get('language');
+		if (languageParam) {
+			const normalized = normalizeLocaleString(languageParam);
+			if (isSupportedLocale(normalized)) {
+				return normalized;
+			}
 		}
 
 		// Check localStorage

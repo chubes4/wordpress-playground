@@ -46,9 +46,11 @@ export function I18nProvider({
 	children,
 	initialLocale,
 }: I18nProviderProps): JSX.Element {
-	const [locale, setLocale] = useState<SupportedLocale>(
-		initialLocale || getInitialLocale()
-	);
+	const [locale, setLocale] = useState<SupportedLocale>(() => {
+		const detectedLocale = initialLocale || getInitialLocale();
+		console.log('[i18n] Detected locale:', detectedLocale);
+		return detectedLocale;
+	});
 	const [isLoading, setIsLoading] = useState(true);
 
 	// Initialize the locale on mount and when locale changes
