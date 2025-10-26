@@ -16,6 +16,7 @@ import { FileExplorerSidebar } from './file-explorer-sidebar';
 import { CodeEditor, type CodeEditorHandle } from './code-editor';
 import styles from './style.module.css';
 import { logger } from '@php-wasm/logger';
+import { useI18n } from '../../../lib/i18n';
 
 const SAVE_DEBOUNCE_MS = 1500;
 
@@ -38,6 +39,7 @@ export function SiteFileBrowser({
 	isVisible?: boolean;
 	documentRoot: string;
 }) {
+	const { __ } = useI18n();
 	const client = usePlaygroundClient(site.slug);
 	const filesystem = useFilesystem(client);
 
@@ -87,6 +89,7 @@ export function SiteFileBrowser({
 				codeRef,
 				setSaveState,
 				setSaveError,
+				__,
 			});
 		}
 		previousClientRef.current = client ?? null;
@@ -100,9 +103,10 @@ export function SiteFileBrowser({
 				codeRef,
 				setSaveState,
 				setSaveError,
+				__,
 			});
 		};
-	}, []);
+	}, [__]);
 
 	useEffect(() => {
 		if (!client) {
@@ -163,7 +167,7 @@ export function SiteFileBrowser({
 			} catch (error) {
 				logger.error('Failed to save file', error);
 				setSaveState(SaveState.ERROR);
-				setSaveError('Could not save changes. Try again.');
+				setSaveError(__('Could not save changes. Try again.'));
 			}
 		}, SAVE_DEBOUNCE_MS);
 		saveTimeoutRef.current = timeout;
@@ -245,6 +249,7 @@ export function SiteFileBrowser({
 					codeRef,
 					setSaveState,
 					setSaveError,
+					__,
 				});
 			} catch {
 				// Best-effort save; ignore errors so the new file can still open.
@@ -343,6 +348,7 @@ export function SiteFileBrowser({
 				codeRef,
 				setSaveState,
 				setSaveError,
+				__,
 			});
 		} catch {
 			/* noop */
@@ -365,6 +371,7 @@ export function SiteFileBrowser({
 					codeRef,
 					setSaveState,
 					setSaveError,
+					__,
 				});
 			} catch {
 				/* noop */
@@ -397,17 +404,18 @@ export function SiteFileBrowser({
 			codeRef,
 			setSaveState,
 			setSaveError,
+			__,
 		});
-	}, []);
+	}, [__]);
 
-	const saveStatusLabel = getSaveStatusLabel(saveState, saveError);
+	const saveStatusLabel = getSaveStatusLabel(saveState, saveError, __);
 	const saveStatusClassName = getSaveStatusClassName(saveState, styles);
 
 	if (!client || !filesystem) {
 		return (
 			<div className={styles.container}>
 				<div className={styles.placeholder}>
-					Start this Playground to browse and edit its files.
+					{__('Start this Playground to browse and edit its files.')}
 				</div>
 			</div>
 		);
@@ -446,8 +454,8 @@ export function SiteFileBrowser({
 							}
 						>
 							{showExplorerOnMobile
-								? 'Hide files'
-								: 'Browse files'}
+								? __('Hide files')
+								: __('Browse files')}
 						</Button>
 						<div
 							className={classNames(styles.editorPath, {
@@ -457,7 +465,10 @@ export function SiteFileBrowser({
 						>
 							{currentPath?.length
 								? currentPath
-								: `Browse files under ${documentRoot}`}
+								: __('Browse files under %s').replace(
+										'%s',
+										documentRoot
+								  )}
 						</div>
 						<div
 							className={classNames(
@@ -493,7 +504,7 @@ export function SiteFileBrowser({
 						)
 					) : (
 						<div className={styles.placeholder}>
-							Select a file to view or edit its contents.
+							{__('Select a file to view or edit its contents.')}
 						</div>
 					)}
 				</section>
@@ -527,15 +538,19 @@ function useFilesystem(
 	}, [client]);
 }
 
-function getSaveStatusLabel(saveState: SaveState, saveError: string | null) {
+function getSaveStatusLabel(
+	saveState: SaveState,
+	saveError: string | null,
+	__: (text: string) => string
+) {
 	switch (saveState) {
 		case SaveState.PENDING:
 		case SaveState.SAVING:
-			return 'Saving…';
+			return __('Saving…');
 		case SaveState.SAVED:
-			return 'Saved';
+			return __('Saved');
 		case SaveState.ERROR:
-			return saveError ?? 'Save failed';
+			return saveError ?? __('Save failed');
 		default:
 			return '';
 	}
@@ -565,12 +580,14 @@ async function flushPendingSave(
 		codeRef,
 		setSaveState,
 		setSaveError,
+		__,
 	}: {
 		saveTimeoutRef: MutableRefObject<number | null>;
 		currentPathRef: MutableRefObject<string | null>;
 		codeRef: MutableRefObject<string>;
 		setSaveState: React.Dispatch<React.SetStateAction<SaveState>>;
 		setSaveError: React.Dispatch<React.SetStateAction<string | null>>;
+		__: (text: string) => string;
 	}
 ) {
 	if (saveTimeoutRef.current === null) {
@@ -591,7 +608,7 @@ async function flushPendingSave(
 	} catch (error) {
 		logger.error('Failed to save file', error);
 		setSaveState(SaveState.ERROR);
-		setSaveError('Could not save changes. Try again.');
+		setSaveError(__('Could not save changes. Try again.'));
 		throw error;
 	}
 }

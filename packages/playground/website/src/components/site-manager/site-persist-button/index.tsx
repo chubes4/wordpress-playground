@@ -5,6 +5,7 @@ import type { SiteStorageType } from '../../../lib/state/redux/slice-sites';
 import { setActiveModal } from '../../../lib/state/redux/slice-ui';
 import { modalSlugs } from '../../layout';
 import React from 'react';
+import { useI18n } from '../../../lib/i18n';
 
 export function SitePersistButton({
 	siteSlug,
@@ -14,6 +15,7 @@ export function SitePersistButton({
 	children: React.ReactNode;
 	storage?: Extract<SiteStorageType, 'opfs' | 'local-fs'> | null;
 }) {
+	const { __ } = useI18n();
 	const clientInfo = useAppSelector((state) =>
 		selectClientInfoBySiteSlug(state, siteSlug)
 	);
@@ -30,7 +32,7 @@ export function SitePersistButton({
 				{button}
 				{clientInfo?.opfsSync?.status === 'error' && (
 					<div className={css.error}>
-						There has been an error. Please try again.
+						{__('There has been an error. Please try again.')}
 					</div>
 				)}
 			</>

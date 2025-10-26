@@ -21,6 +21,7 @@ import { GithubExportMenuItem } from '../../toolbar-buttons/github-export-menu-i
 import { ReportError } from '../../toolbar-buttons/report-error';
 import { TemporarySiteNotice } from '../temporary-site-notice';
 import type { SiteInfo } from '../../../lib/state/redux/slice-sites';
+import { useI18n } from '../../../lib/i18n';
 import {
 	setSiteManagerOpen,
 	setSiteManagerSection,
@@ -76,6 +77,7 @@ export function SiteInfoPanel({
 	mobileUi?: boolean;
 	siteViewHidden?: boolean;
 }) {
+	const { __ } = useI18n();
 	const offline = useAppSelector((state) => state.ui.offline);
 	const dispatch = useAppDispatch();
 
@@ -96,7 +98,10 @@ export function SiteInfoPanel({
 	const removeSiteAndCloseMenu = async (onClose: () => void) => {
 		// TODO: Replace with HTML-based dialog
 		const proceed = window.confirm(
-			`Are you sure you want to delete the site '${site.metadata.name}'?`
+			__("Are you sure you want to delete the site '%s'?").replace(
+				'%s',
+				site.metadata.name
+			)
 		);
 		if (proceed) {
 			await dispatch(removeSite(site.slug));
@@ -140,7 +145,7 @@ export function SiteInfoPanel({
 			? (opfsMountDescriptor as any)?.device?.handle?.name
 			: undefined;
 
-	const title = isTemporary ? 'Temporary Playground' : site.metadata.name;
+	const title = isTemporary ? __('Temporary Playground') : site.metadata.name;
 	const titleWords = title.split(' ');
 	const titleStart = titleWords.slice(0, -1).join(' ');
 	const titleEnd = titleWords[titleWords.length - 1];
@@ -172,7 +177,7 @@ export function SiteInfoPanel({
 							<FlexItem style={{ marginLeft: -20 }}>
 								<Button
 									variant="link"
-									label="Back to sites list"
+									label={__('Back to sites list')}
 									icon={() => (
 										<Icon icon={chevronLeft} size={38} />
 									)}
@@ -231,7 +236,9 @@ export function SiteInfoPanel({
 																css.siteInfoRenameButton
 															}
 															icon={edit}
-															label="Rename Playground"
+															label={__(
+																'Rename Playground'
+															)}
 															showTooltip={true}
 															variant="tertiary"
 															isSmall={true}
@@ -271,14 +278,18 @@ export function SiteInfoPanel({
 											switch (site.metadata.storage) {
 												case 'local-fs':
 													return (
-														'Saved in a local directory' +
+														__(
+															'Saved in a local directory'
+														) +
 														(localDirName
 															? ` (${localDirName})`
 															: '') +
 														` ${createdAgo}`
 													);
 												case 'opfs':
-													return `Saved in this browser ${createdAgo}`;
+													return __(
+														'Saved in this browser %s'
+													).replace('%s', createdAgo);
 											}
 										})()}{' '}
 									</span>
@@ -293,7 +304,7 @@ export function SiteInfoPanel({
 										dispatch(setSiteManagerOpen(false));
 									}}
 								>
-									Open site
+									{__('Open site')}
 								</Button>
 							</FlexItem>
 						) : (
@@ -304,7 +315,7 @@ export function SiteInfoPanel({
 										disabled={!playground}
 										onClick={() => navigateTo('/wp-admin/')}
 									>
-										WP Admin
+										{__('WP Admin')}
 									</Button>
 								</FlexItem>
 								<FlexItem className={css.siteInfoHeaderAction}>
@@ -313,7 +324,7 @@ export function SiteInfoPanel({
 										disabled={!playground}
 										onClick={() => navigateTo('/')}
 									>
-										Homepage
+										{__('Homepage')}
 									</Button>
 								</FlexItem>
 							</>
@@ -321,7 +332,7 @@ export function SiteInfoPanel({
 						<FlexItem className={css.siteInfoHeaderAction}>
 							<DropdownMenu
 								icon={moreVertical}
-								label="Additional actions"
+								label={__('Additional actions')}
 								popoverProps={{
 									placement: 'bottom-end',
 								}}
@@ -331,7 +342,9 @@ export function SiteInfoPanel({
 										{!isTemporary && (
 											<MenuGroup>
 												<MenuItem
-													aria-label="Delete this Playground"
+													aria-label={__(
+														'Delete this Playground'
+													)}
 													className={css.danger}
 													onClick={() =>
 														removeSiteAndCloseMenu(
@@ -339,7 +352,7 @@ export function SiteInfoPanel({
 														)
 													}
 												>
-													Delete
+													{__('Delete')}
 												</MenuItem>
 											</MenuGroup>
 										)}
@@ -380,10 +393,12 @@ export function SiteInfoPanel({
 												}}
 												icon={external}
 												iconPosition="right"
-												aria-label="View Blueprint"
+												aria-label={__(
+													'View Blueprint'
+												)}
 												disabled={offline}
 											>
-												View Blueprint
+												{__('View Blueprint')}
 											</MenuItem>
 										</MenuGroup>
 										<MenuGroup>
@@ -406,15 +421,15 @@ export function SiteInfoPanel({
 						tabs={[
 							{
 								name: 'settings',
-								title: 'Settings',
+								title: __('Settings'),
 							},
 							{
 								name: 'files',
-								title: 'File browser',
+								title: __('File browser'),
 							},
 							{
 								name: 'logs',
-								title: 'Logs',
+								title: __('Logs'),
 							},
 						]}
 					>
@@ -455,7 +470,7 @@ export function SiteInfoPanel({
 									<Suspense
 										fallback={
 											<div className={css.padded}>
-												Loading file browser...
+												{__('Loading file browser...')}
 											</div>
 										}
 									>

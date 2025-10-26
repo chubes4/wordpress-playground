@@ -118,6 +118,12 @@
 			"This is a temporary Playground. Your changes will be lost on page refresh.": [
 				"Este es un Playground temporal. Sus cambios se perderán al actualizar la página."
 			],
+			"This is a temporary Playground.": [
+				"Este es un Playground temporal."
+			],
+			"Your changes will be lost on page refresh.": [
+				"Sus cambios se perderán al actualizar la página."
+			],
 			"Temporary Playground": ["Playground Temporal"],
 			"Blueprints Gallery": ["Galería de Blueprints"],
 			"Saved Playgrounds": ["Playgrounds Guardados"],
@@ -293,7 +299,18 @@
 			],
 			"There has been an error. Please try again.": [
 				"Ha ocurrido un error. Por favor, inténtelo de nuevo."
-			]
+			],
+			"WordPress Version is required": [
+				"La versión de WordPress es obligatoria"
+			],
+			"WordPress Version": ["Versión de WordPress"],
+			"-- Select a version --": ["-- Seleccione una versión --"],
+			"Need an older version?": ["¿Necesita una versión anterior?"],
+			"PHP version is required": ["La versión de PHP es obligatoria"],
+			"PHP Version": ["Versión de PHP"],
+			"Language": ["Idioma"],
+			"Allow network access": ["Permitir acceso a la red"],
+			"Create a multisite network": ["Crear una red multisite"]
 		}
 	}
 }
