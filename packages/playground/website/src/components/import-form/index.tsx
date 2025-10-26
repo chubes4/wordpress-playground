@@ -5,6 +5,7 @@ import { importWordPressFiles } from '@wp-playground/client';
 import forms from '../../forms.module.css';
 import { logger } from '@php-wasm/logger';
 import ModalButtons from '../modal/modal-buttons';
+import { useI18n } from '../../lib/i18n';
 
 interface ImportFormProps {
 	playground: PlaygroundClient;
@@ -17,6 +18,7 @@ export default function ImportForm({
 	onImported,
 	onClose,
 }: ImportFormProps) {
+	const { __ } = useI18n();
 	const fileInputRef = useRef<any>();
 	const [file, setFile] = useState<File | null>(null);
 	const [error, setError] = useState<string>('');
@@ -35,7 +37,9 @@ export default function ImportForm({
 		} catch (error) {
 			logger.error(error);
 			setError(
-				'Unable to import file. Is it a valid WordPress Playground export?'
+				__(
+					'Unable to import file. Is it a valid WordPress Playground export?'
+				)
 			);
 			return;
 		}
@@ -46,8 +50,9 @@ export default function ImportForm({
 	return (
 		<>
 			<p>
-				You may replace the current WordPress Playground site with a
-				previously exported one.
+				{__(
+					'You may replace the current WordPress Playground site with a previously exported one.'
+				)}
 			</p>
 			<div className={`${forms.formGroup} ${forms.formGroupLast}`}>
 				{error ? <div className={forms.error}>{error}</div> : null}
@@ -64,7 +69,7 @@ export default function ImportForm({
 				areDisabled={!file}
 				onCancel={onClose}
 				onSubmit={handleSubmit}
-				submitText="Import"
+				submitText={__('Import')}
 			/>
 		</>
 	);
