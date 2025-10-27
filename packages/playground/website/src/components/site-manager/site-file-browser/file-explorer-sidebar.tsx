@@ -16,6 +16,9 @@ import {
 import { logger } from '@php-wasm/logger';
 import { dirname, normalizePath } from '@php-wasm/util';
 import { useI18n } from '../../../lib/i18n';
+import { BinaryFilePreview } from './binary-file-preview';
+import mimeTypes from '@php-wasm/universal/mime-types';
+
 
 export const MAX_INLINE_FILE_BYTES = 1024 * 1024; // 1MB
 
@@ -43,6 +46,19 @@ const createDownloadUrl = (data: Uint8Array, filename: string) => {
 	const url = URL.createObjectURL(blob);
 	setTimeout(() => URL.revokeObjectURL(url), 60_000);
 	return { url, filename };
+};
+
+const getMimeType = (filename: string): string => {
+	const extension = filename.split('.').pop() as keyof typeof mimeTypes;
+	return mimeTypes[extension] || mimeTypes['_default'];
+};
+
+const isPreviewableBinary = (mimeType: string): boolean => {
+	return (
+		mimeType.startsWith('image/') ||
+		mimeType.startsWith('video/') ||
+		mimeType.startsWith('audio/')
+	);
 };
 
 export type FileExplorerSidebarProps = {
@@ -91,40 +107,64 @@ export function FileExplorerSidebar({
 		try {
 			const data = await filesystem.readFileAsBuffer(path);
 			const size = data.byteLength;
+			const filename = path.split('/').pop() || 'download';
+
 			if (size > MAX_INLINE_FILE_BYTES) {
-				const { url, filename } = createDownloadUrl(
+				const { url, filename: fname } = createDownloadUrl(
 					data,
-					path.split('/').pop() || 'download'
+					filename
 				);
 				await onShowMessage(
 					<>
 						<p>{__('File too large to open (>1MB).')}</p>
 						<p>
-							<a href={url} download={filename}>
-								{__('Download %s').replace('%s', filename)}
+							<a href={url} download={fname}>
+									{__('Download')} {fname}
 							</a>
 						</p>
 					</>
 				);
 				return;
 			}
+
 			if (seemsLikeBinary(data)) {
-				const { url, filename } = createDownloadUrl(
+				const mimeType = getMimeType(filename);
+				const { url: downloadUrl, filename: fname } = createDownloadUrl(
 					data,
-					path.split('/').pop() || 'download'
+					filename
 				);
+
+				// Check if this is a previewable binary file
+				if (isPreviewableBinary(mimeType)) {
+					// Create a data URL for the preview
+					const blob = new Blob([data], { type: mimeType });
+					const dataUrl = URL.createObjectURL(blob);
+
+					await onShowMessage(
+						<BinaryFilePreview
+							filename={fname}
+							mimeType={mimeType}
+							dataUrl={dataUrl}
+							downloadUrl={downloadUrl}
+						/>
+					);
+					return;
+				}
+
+				// Non-previewable binary file
 				await onShowMessage(
 					<>
 						<p>{__('Binary file. Cannot be edited.')}</p>
 						<p>
-							<a href={url} download={filename}>
-								{__('Download %s').replace('%s', filename)}
+							<a href={downloadUrl} download={fname}>
+								{__('Download')} {fname}
 							</a>
 						</p>
 					</>
 				);
 				return;
 			}
+
 			const text = new TextDecoder('utf-8').decode(data);
 			await onFileOpened(path, text, shouldFocus);
 		} catch (error) {
