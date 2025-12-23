@@ -4,13 +4,14 @@
  *
  * This test:
  * 1. Builds each entry point with Vite
- * 2. Loads the bundled output
+ * 2. Loads the bundled output (Node bundles via import, web bundles via Puppeteer)
  * 3. Verifies it doesn't error out
  */
 import { spawn } from 'child_process';
-import { readdir } from 'fs/promises';
+import { readdir, writeFile, mkdir } from 'fs/promises';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
+import puppeteer from 'puppeteer';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -88,6 +89,126 @@ async function loadNodeBundle(bundlePath: string): Promise<boolean> {
 	}
 }
 
+async function loadWebBundleInBrowser(
+	distDir: string,
+	jsFile: string
+): Promise<{ success: boolean; error?: string }> {
+	console.log(`  Loading web bundle in browser: ${jsFile}...`);
+
+	// Create a simple HTML file that loads the bundle
+	const htmlContent = `<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Bundle Test</title>
+</head>
+<body>
+	<script type="module">
+		window.testErrors = [];
+		window.testLogs = [];
+		window.smokeTestPassed = false;
+
+		window.onerror = (msg, url, line, col, error) => {
+			window.testErrors.push({ msg, url, line, col, error: error?.toString() });
+		};
+
+		const originalConsoleLog = console.log;
+		console.log = (...args) => {
+			window.testLogs.push(args.join(' '));
+			originalConsoleLog.apply(console, args);
+		};
+
+		const originalConsoleError = console.error;
+		console.error = (...args) => {
+			window.testErrors.push({ msg: args.join(' ') });
+			originalConsoleError.apply(console, args);
+		};
+	</script>
+	<script type="module" src="./${jsFile}"></script>
+	<script type="module">
+		// Check if smoke test passed by looking for the log message
+		setTimeout(() => {
+			window.smokeTestPassed = window.testLogs.some(log =>
+				log.includes('Smoke test passed')
+			);
+			window.testComplete = true;
+		}, 1000);
+	</script>
+</body>
+</html>`;
+
+	const htmlPath = join(distDir, 'test.html');
+	await writeFile(htmlPath, htmlContent);
+
+	let browser;
+	try {
+		browser = await puppeteer.launch({
+			headless: true,
+			args: ['--no-sandbox', '--disable-setuid-sandbox'],
+		});
+		const page = await browser.newPage();
+
+		// Collect page errors
+		const pageErrors: string[] = [];
+		page.on('pageerror', (error) => {
+			pageErrors.push(error.toString());
+		});
+		page.on('console', (msg) => {
+			if (msg.type() === 'error') {
+				pageErrors.push(msg.text());
+			}
+		});
+
+		// Navigate to the test page
+		await page.goto(`file://${htmlPath}`, { waitUntil: 'networkidle0' });
+
+		// Wait for test to complete
+		await page.waitForFunction('window.testComplete === true', {
+			timeout: 10000,
+		});
+
+		// Check results
+		const results = await page.evaluate(() => ({
+			errors: (window as any).testErrors,
+			logs: (window as any).testLogs,
+			smokeTestPassed: (window as any).smokeTestPassed,
+		}));
+
+		if (pageErrors.length > 0) {
+			return {
+				success: false,
+				error: `Page errors: ${pageErrors.join(', ')}`,
+			};
+		}
+
+		if (results.errors && results.errors.length > 0) {
+			return {
+				success: false,
+				error: `JS errors: ${JSON.stringify(results.errors)}`,
+			};
+		}
+
+		if (!results.smokeTestPassed) {
+			return {
+				success: false,
+				error: `Smoke test did not pass. Logs: ${results.logs?.join(', ') || 'none'}`,
+			};
+		}
+
+		console.log(`  Web bundle loaded successfully in browser`);
+		return { success: true };
+	} catch (error) {
+		return {
+			success: false,
+			error: `Puppeteer error: ${error}`,
+		};
+	} finally {
+		if (browser) {
+			await browser.close();
+		}
+	}
+}
+
 async function runTest(
 	name: string,
 	configFile: string,
@@ -130,8 +251,7 @@ async function runTest(
 		}
 	}
 
-	// For web bundles, just verify the build succeeded
-	// (we can't easily run browser code in Node.js)
+	// For web bundles, load them in a browser using Puppeteer
 	if (target === 'web') {
 		const distDir = join(__dirname, outputDir);
 		try {
@@ -144,12 +264,16 @@ async function runTest(
 					error: 'No JS file found in output',
 				};
 			}
-			console.log(`  Web bundle created: ${jsFile}`);
+
+			const browserResult = await loadWebBundleInBrowser(distDir, jsFile);
+			if (!browserResult.success) {
+				return { name, success: false, error: browserResult.error };
+			}
 		} catch (error) {
 			return {
 				name,
 				success: false,
-				error: `Failed to read output directory: ${error}`,
+				error: `Failed to test web bundle: ${error}`,
 			};
 		}
 	}
