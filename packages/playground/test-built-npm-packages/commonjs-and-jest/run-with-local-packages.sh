@@ -22,5 +22,8 @@ cd "$SCRIPT_DIR"
 # Install dependencies from local registry
 npm install
 
-# Run tests
+# Run functional tests
 npm run test
+
+# Run bundler tests
+npm run test:bundle
