@@ -40,7 +40,13 @@ export function viteExternalDynamicImports(
 			for (const rule of rules) {
 				if (new RegExp(rule.regex).test(specifier)) {
 					matchedRules.add(rule);
-					return rule.transform(specifier);
+					// Return an object with external: true so Rollup uses the
+					// transformed path as-is without resolving it relative to
+					// the source file location.
+					return {
+						id: rule.transform(specifier),
+						external: true,
+					};
 				}
 			}
 
