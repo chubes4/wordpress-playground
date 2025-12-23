@@ -15,7 +15,7 @@
 	"type": "commonjs",
 	"main": "index.js",
 	"scripts": {
-		"test": "jest --runInBand",
+		"test": "node run-tests.cjs",
 		"test:bundle": "node bundler-tests/run-bundler-tests.cjs"
 	},
 	"devDependencies": {
