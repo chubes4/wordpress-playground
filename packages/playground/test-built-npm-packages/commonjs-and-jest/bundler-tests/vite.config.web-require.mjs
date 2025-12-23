@@ -1,5 +1,6 @@
 /**
  * Vite config for bundling web packages with CommonJS require() for browser.
+ * Binary assets are externalized - they're loaded at runtime.
  */
 import { defineConfig } from 'vite';
 import { resolve, dirname } from 'path';
@@ -17,21 +18,10 @@ export default defineConfig({
 			formats: ['es'],
 		},
 		rollupOptions: {
-			external: [],
+			external: [/\.wasm$/, /\.so$/, /\.dat$/],
 		},
 		target: 'esnext',
 		minify: false,
 		sourcemap: true,
-	},
-	assetsInclude: [/\.dat$/, /\.wasm$/, /\.so$/, /\.la$/],
-	optimizeDeps: {
-		esbuildOptions: {
-			loader: {
-				'.dat': 'text',
-				'.wasm': 'binary',
-				'.so': 'binary',
-				'.la': 'text',
-			},
-		},
 	},
 });

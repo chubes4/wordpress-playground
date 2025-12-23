@@ -2,9 +2,13 @@
  * Vite config for bundling node-related packages with dynamic imports.
  * This config bundles @php-wasm/node and @php-wasm/universal into a Node.js-compatible bundle
  * using dynamic import() statements.
+ *
+ * Node.js builtins and binary assets are externalized because they're available
+ * at runtime in Node.js environments.
  */
 import { defineConfig } from 'vite';
 import { resolve } from 'path';
+import { builtinModules } from 'module';
 
 export default defineConfig({
 	build: {
@@ -16,13 +20,17 @@ export default defineConfig({
 			formats: ['es'],
 		},
 		rollupOptions: {
-			// Don't externalize anything - we want to test that everything bundles
-			external: [],
+			// Externalize Node.js builtins and binary assets
+			external: [
+				...builtinModules,
+				...builtinModules.map((m) => `node:${m}`),
+				/\.wasm$/,
+				/\.so$/,
+				/\.dat$/,
+			],
 		},
 		target: 'node18',
 		minify: false,
 		sourcemap: true,
 	},
-	// Handle special file types that php-wasm packages use
-	assetsInclude: [/\.dat$/, /\.wasm$/, /\.so$/, /\.la$/],
 });

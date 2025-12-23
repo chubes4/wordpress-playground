@@ -1,6 +1,9 @@
 /**
  * Vite config for bundling web-related packages for the browser.
  * This config bundles @php-wasm/web and @php-wasm/universal into a browser-compatible bundle.
+ *
+ * WASM and binary files are externalized because they're loaded dynamically at runtime,
+ * not bundled inline. This matches how real-world applications use these packages.
  */
 import { defineConfig } from 'vite';
 import { resolve } from 'path';
@@ -15,24 +18,11 @@ export default defineConfig({
 			formats: ['es'],
 		},
 		rollupOptions: {
-			// Don't externalize anything - we want to test that everything bundles
-			external: [],
+			// Externalize binary assets - they're loaded at runtime, not bundled
+			external: [/\.wasm$/, /\.so$/, /\.dat$/],
 		},
-		// Ensure we're targeting browser
 		target: 'esnext',
 		minify: false,
 		sourcemap: true,
-	},
-	// Handle special file types that php-wasm packages use
-	assetsInclude: [/\.dat$/, /\.wasm$/, /\.so$/, /\.la$/],
-	optimizeDeps: {
-		esbuildOptions: {
-			loader: {
-				'.dat': 'text',
-				'.wasm': 'binary',
-				'.so': 'binary',
-				'.la': 'text',
-			},
-		},
 	},
 });
