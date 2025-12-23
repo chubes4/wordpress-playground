@@ -21,6 +21,7 @@ describe(`PHP ${phpVersion}`, { concurrency: 1 }, () => {
 			command: 'server',
 			php: phpVersion,
 			quiet: true,
+			port: 0, // Use random available port to avoid conflicts
 		});
 		try {
 			const response = await cli.playground.request({
@@ -125,6 +126,7 @@ describe(`PHP ${phpVersion}`, { concurrency: 1 }, () => {
 				command: 'server',
 				php: phpVersion,
 				quiet: true,
+				port: 0, // Use random available port to avoid conflicts
 				blueprint: {
 					steps: [
 						{

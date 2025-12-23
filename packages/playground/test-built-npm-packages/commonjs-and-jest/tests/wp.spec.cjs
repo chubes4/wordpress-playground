@@ -17,6 +17,7 @@ async function testWordPressLoads() {
 		command: 'server',
 		php: phpVersion,
 		quiet: true,
+		port: 0, // Use random available port to avoid conflicts
 	});
 	try {
 		// Make a request
