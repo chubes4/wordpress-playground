@@ -144,7 +144,12 @@ async function loadWebBundleInBrowser(
 	try {
 		browser = await puppeteer.launch({
 			headless: true,
-			args: ['--no-sandbox', '--disable-setuid-sandbox'],
+			args: [
+				'--no-sandbox',
+				'--disable-setuid-sandbox',
+				'--allow-file-access-from-files',
+				'--disable-web-security',
+			],
 		});
 		const page = await browser.newPage();
 
@@ -256,12 +261,15 @@ async function runTest(
 		const distDir = join(__dirname, outputDir);
 		try {
 			const files = await readdir(distDir);
-			const jsFile = files.find((f) => f.endsWith('.js'));
+			// Look for .js or .mjs files (Vite may use either depending on package type)
+			const jsFile = files.find(
+				(f) => f.endsWith('.js') || f.endsWith('.mjs')
+			);
 			if (!jsFile) {
 				return {
 					name,
 					success: false,
-					error: 'No JS file found in output',
+					error: `No JS file found in output. Files: ${files.join(', ')}`,
 				};
 			}
 
