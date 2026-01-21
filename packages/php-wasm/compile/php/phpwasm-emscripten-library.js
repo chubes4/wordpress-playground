@@ -24,6 +24,12 @@ const LibraryExample = {
 		POLLHUP: Number('{{{cDefs.POLLHUP}}}'),
 		SETFL_MASK:
 			Number('{{{cDefs.O_APPEND}}}') | Number('{{{cDefs.O_NONBLOCK}}}'),
+
+		/**
+		 * Map to store socket timeout values set via SO_RCVTIMEO and SO_SNDTIMEO.
+		 * Key: socket file descriptor, Value: {receive: ms, send: ms}
+		 */
+		socketTimeouts: new Map(),
 		// These macros are not defined in Emscripten at the time of writing:
 		// emscripten_O_NDELAY |
 		// emscripten_O_DIRECT |
@@ -348,6 +354,28 @@ const LibraryExample = {
 		},
 		noop: function () {},
 
+		/**
+		 * Parses a struct timeval from memory and converts it to milliseconds.
+		 * struct timeval has two fields:
+		 *   - tv_sec: seconds (4 bytes on 32-bit systems, 8 bytes on 64-bit)
+		 *   - tv_usec: microseconds (4 bytes on 32-bit systems, 8 bytes on 64-bit)
+		 *
+		 * WASM32 uses 32-bit pointers, so we read 4-byte integers.
+		 *
+		 * @param {int} ptr Pointer to struct timeval
+		 * @returns {number} Timeout in milliseconds
+		 */
+		parseTimeval: function (ptr) {
+			if (!ptr) {
+				return 0;
+			}
+			// Read tv_sec (4 bytes) and tv_usec (4 bytes) as 32-bit integers
+			const tv_sec = HEAP32[ptr >> 2];
+			const tv_usec = HEAP32[(ptr >> 2) + 1];
+			// Convert to milliseconds
+			return tv_sec * 1000 + Math.floor(tv_usec / 1000);
+		},
+
 		spawnProcess: function (command, args, options) {
 			if (Module['spawnProcess']) {
 				const spawned = Module['spawnProcess'](
@@ -421,6 +449,10 @@ const LibraryExample = {
 			try {
 				peer.socket.close();
 				SOCKFS.websocket_sock_ops.removePeer(sock, peer);
+
+				// Clean up stored timeout data for this socket
+				PHPWASM.socketTimeouts.delete(socketd);
+
 				return 0;
 			} catch (e) {
 				console.log('Socket shutdown error', e);
@@ -869,10 +901,17 @@ const LibraryExample = {
 	/**
 	 * Shims setsockopt(2) functionality for asynchronous websockets:
 	 * https://man7.org/linux/man-pages/man2/setsockopt.2.html
-	 * The only supported options are SO_KEEPALIVE and TCP_NODELAY.
 	 *
-	 * Technically these options are propagated to the WebSockets proxy
+	 * Supported options:
+	 * - SO_KEEPALIVE and TCP_NODELAY: Forwarded to the WebSocket proxy
+	 * - SO_RCVTIMEO and SO_SNDTIMEO: Stored and used for connection timeouts
+	 *
+	 * SO_KEEPALIVE and TCP_NODELAY are propagated to the WebSockets proxy
 	 * server which then sets them on the underlying TCP connection.
+	 *
+	 * SO_RCVTIMEO and SO_SNDTIMEO are stored per-socket and used to control
+	 * connection timeouts in wasm_connect. The send timeout (SO_SNDTIMEO) is
+	 * used for connection establishment timeouts.
 	 *
 	 * @param {int} socketd Socket descriptor
 	 * @param {int} level  Level at which the option is defined
@@ -896,27 +935,39 @@ const LibraryExample = {
 		const IPPROTO_TCP = 6;
 		const TCP_NODELAY = 1;
 
+		// Handle timeout options by storing them for later use
+		if (
+			level === SOL_SOCKET &&
+			(optionName === SO_RCVTIMEO || optionName === SO_SNDTIMEO)
+		) {
+			// Parse the struct timeval and convert to milliseconds
+			const timeoutMs = PHPWASM.parseTimeval(optionValuePtr);
+
+			// Store the timeout value for this socket
+			if (!PHPWASM.socketTimeouts.has(socketd)) {
+				PHPWASM.socketTimeouts.set(socketd, {});
+			}
+			const timeouts = PHPWASM.socketTimeouts.get(socketd);
+
+			if (optionName === SO_RCVTIMEO) {
+				timeouts.receive = timeoutMs;
+			} else {
+				timeouts.send = timeoutMs;
+			}
+
+			return 0;
+		}
+
 		// Options that we can forward to the WebSocket proxy
 		const isForwardable =
 			(level === SOL_SOCKET && optionName === SO_KEEPALIVE) ||
 			(level === IPPROTO_TCP && optionName === TCP_NODELAY);
 
-		// Options that we acknowledge but don't actually implement
-		// (WebSocket connections handle timeouts differently)
-		const isIgnorable =
-			level === SOL_SOCKET &&
-			(optionName === SO_RCVTIMEO || optionName === SO_SNDTIMEO);
-
-		if (!isForwardable && !isIgnorable) {
+		if (!isForwardable) {
 			console.warn(
 				`Unsupported socket option: ${level}, ${optionName}, ${optionValue}`
 			);
 			return -1;
-		}
-
-		// For ignorable options, just return success
-		if (isIgnorable) {
-			return 0;
 		}
 
 		const ws = PHPWASM.getAllWebSockets(socketd)[0];
@@ -955,6 +1006,10 @@ const LibraryExample = {
 	 * immediately before the connection is established. This wrapper
 	 * performs the connection and waits for the WebSocket to actually
 	 * connect before returning.
+	 *
+	 * Respects the SO_SNDTIMEO socket option set via setsockopt(). If no
+	 * timeout is set, defaults to 30 seconds. Returns ETIMEDOUT if the
+	 * connection doesn't establish within the timeout period.
 	 *
 	 * @param {int} sockfd Socket file descriptor
 	 * @param {int} addr Pointer to sockaddr structure
@@ -1025,7 +1080,9 @@ const LibraryExample = {
 			}
 
 			// Wait for the connection to be established
-			const timeout = 30000; // 30 second timeout
+			// Use caller-provided timeout if available, otherwise default to 30 seconds
+			const timeouts = PHPWASM.socketTimeouts.get(sockfd);
+			const timeout = timeouts?.send || 30000; // Default to 30 seconds
 			let resolved = false;
 
 			const timeoutId = setTimeout(() => {
