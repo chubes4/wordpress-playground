@@ -1330,6 +1330,32 @@ export class PHP implements Disposable {
 	}
 
 	/**
+	 * Returns information about WASM memory usage.
+	 * This is useful for debugging memory issues and understanding
+	 * the memory footprint of the PHP runtime.
+	 *
+	 * @returns An object containing memory usage information in bytes and MB.
+	 */
+	getMemoryUsage(): {
+		wasmHeapSize: number;
+		wasmHeapSizeMB: number;
+	} {
+		const runtime = this[__private__dont__use];
+		if (!runtime || !runtime.HEAPU8) {
+			return {
+				wasmHeapSize: 0,
+				wasmHeapSizeMB: 0,
+			};
+		}
+		const wasmHeapSize = runtime.HEAPU8.buffer.byteLength;
+		return {
+			wasmHeapSize,
+			wasmHeapSizeMB:
+				Math.round((wasmHeapSize / 1024 / 1024) * 100) / 100,
+		};
+	}
+
+	/**
 	 * Enables inline PHP runtime rotation after a certain number of requests
 	 * or an internal crash.
 	 */

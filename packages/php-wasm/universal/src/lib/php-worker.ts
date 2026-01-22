@@ -37,6 +37,7 @@ export type LimitedPHPApi = Pick<
 	| 'chdir'
 	| 'run'
 	| 'onMessage'
+	| 'getMemoryUsage'
 > & {
 	documentRoot: PHP['documentRoot'];
 	absoluteUrl: PHP['absoluteUrl'];
@@ -292,6 +293,11 @@ export class PHPWorker implements LimitedPHPApi, AsyncDisposable {
 	/** @inheritDoc @php-wasm/universal!/PHP.fileExists */
 	fileExists(path: string): boolean {
 		return _private.get(this)!.php!.fileExists(path);
+	}
+
+	/** @inheritDoc @php-wasm/universal!/PHP.getMemoryUsage */
+	getMemoryUsage(): { wasmHeapSize: number; wasmHeapSizeMB: number } {
+		return _private.get(this)!.php!.getMemoryUsage();
 	}
 
 	/** @inheritDoc @php-wasm/universal!/PHP.onMessage */
