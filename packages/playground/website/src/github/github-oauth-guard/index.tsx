@@ -6,6 +6,7 @@ import { useState } from 'react';
 import classNames from 'classnames';
 import { useActiveSite } from '../../lib/state/redux/store';
 import { Modal } from '../../components/modal';
+import { encodeStringAsBase64 } from '../../lib/base64';
 
 const OAUTH_FLOW_URL = 'oauth.php?redirect=1';
 const urlParams = new URLSearchParams(window.location.search);
@@ -60,6 +61,21 @@ export default function GitHubOAuthGuard({
 	const urlParams = new URLSearchParams();
 	const cleanUrl = new URL(window.location.href);
 	cleanUrl.searchParams.delete('code');
+
+	// URL fragments are lost during OAuth redirects (they're not sent to
+	// servers). Convert a fragment blueprint to a blueprint-url data URI
+	// query parameter so it survives the round-trip.
+	if (cleanUrl.hash && !cleanUrl.searchParams.has('blueprint-url')) {
+		const fragment = decodeURIComponent(cleanUrl.hash.substring(1));
+		if (fragment.startsWith('{')) {
+			const dataUri =
+				'data:application/json;base64,' +
+				encodeStringAsBase64(fragment);
+			cleanUrl.searchParams.set('blueprint-url', dataUri);
+			cleanUrl.hash = '';
+		}
+	}
+
 	urlParams.set('redirect_uri', cleanUrl.toString());
 	const oauthUrl = `${OAUTH_FLOW_URL}&${urlParams.toString()}`;
 	return (
