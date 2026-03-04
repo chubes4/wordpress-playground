@@ -1,6 +1,6 @@
 import dependencyFilename from './7_4_33/php_7_4.wasm';
 export { dependencyFilename };
-export const dependenciesTotalSize = 16451093;
+export const dependenciesTotalSize = 19964820;
 const phpVersionString = '7.4.33';
 export function init(RuntimeName, PHPLoader) {
 	// The rest of the code comes from the built php.js file and esm-suffix.js
@@ -6944,7 +6944,21 @@ export function init(RuntimeName, PHPLoader) {
 				argsArray.push(UTF8ToString(HEAPU32[charPointer >> 2]));
 			}
 		}
-		const cwdstr = cwdPtr ? UTF8ToString(cwdPtr) : FS.cwd();
+		let cwdstr = null;
+		if (cwdPtr) {
+			cwdstr = UTF8ToString(cwdPtr);
+		} else {
+			try {
+				const vfsCwd = FS.cwd();
+				const lookup = FS.lookupPath(vfsCwd);
+				if (
+					typeof NODEFS !== 'undefined' &&
+					lookup.node.mount.type === NODEFS
+				) {
+					cwdstr = NODEFS.realPath(lookup.node);
+				}
+			} catch (e) {}
+		}
 		let envObject = null;
 		if (envLength) {
 			envObject = {};
@@ -7682,7 +7696,32 @@ export function init(RuntimeName, PHPLoader) {
 	Module['FS'] = FS;
 	Module['_exit'] = _exit;
 	Module['_emscripten_sleep'] = _emscripten_sleep;
-	var ASM_CONSTS = {};
+	Module['_setTempRet0'] = _setTempRet0;
+	Module['_getTempRet0'] = _getTempRet0;
+	Module['__Unwind_RaiseException'] = __Unwind_RaiseException;
+	Module['__Unwind_DeleteException'] = __Unwind_DeleteException;
+	Module['_sched_yield'] = _sched_yield;
+	Module['___syscall_shutdown'] = ___syscall_shutdown;
+	Module['_recv'] = _recv;
+	Module['_setsockopt'] = _setsockopt;
+	var ASM_CONSTS = {
+		11264706: ($0) => {
+			if (!$0) {
+				AL.alcErr = 40964;
+				return 1;
+			}
+		},
+		11264754: ($0) => {
+			if (!AL.currentCtx) {
+				err('alGetProcAddress() called without a valid context');
+				return 1;
+			}
+			if (!$0) {
+				AL.currentCtx.err = 40963;
+				return 1;
+			}
+		},
+	};
 	function __asyncjs__js_popen_to_file(command, mode, exitCodePtr) {
 		return Asyncify.handleAsync(async () => {
 			const returnCallback = (resolver) => new Promise(resolver);

@@ -1,6 +1,6 @@
 import dependencyFilename from './8_4_18/php_8_4.wasm';
 export { dependencyFilename };
-export const dependenciesTotalSize = 22365043;
+export const dependenciesTotalSize = 26168555;
 const phpVersionString = '8.4.18';
 export function init(RuntimeName, PHPLoader) {
 	// The rest of the code comes from the built php.js file and esm-suffix.js
@@ -6956,7 +6956,21 @@ export function init(RuntimeName, PHPLoader) {
 				argsArray.push(UTF8ToString(HEAPU32[charPointer >> 2]));
 			}
 		}
-		const cwdstr = cwdPtr ? UTF8ToString(cwdPtr) : FS.cwd();
+		let cwdstr = null;
+		if (cwdPtr) {
+			cwdstr = UTF8ToString(cwdPtr);
+		} else {
+			try {
+				const vfsCwd = FS.cwd();
+				const lookup = FS.lookupPath(vfsCwd);
+				if (
+					typeof NODEFS !== 'undefined' &&
+					lookup.node.mount.type === NODEFS
+				) {
+					cwdstr = NODEFS.realPath(lookup.node);
+				}
+			} catch (e) {}
+		}
 		let envObject = null;
 		if (envLength) {
 			envObject = {};

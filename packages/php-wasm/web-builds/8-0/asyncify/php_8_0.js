@@ -1,6 +1,6 @@
 import dependencyFilename from './8_0_30/php_8_0.wasm';
 export { dependencyFilename };
-export const dependenciesTotalSize = 20696339;
+export const dependenciesTotalSize = 20696363;
 const phpVersionString = '8.0.30';
 export function init(RuntimeName, PHPLoader) {
 	// The rest of the code comes from the built php.js file and esm-suffix.js
@@ -13590,7 +13590,21 @@ export function init(RuntimeName, PHPLoader) {
 				argsArray.push(UTF8ToString(HEAPU32[charPointer >> 2]));
 			}
 		}
-		const cwdstr = cwdPtr ? UTF8ToString(cwdPtr) : FS.cwd();
+		let cwdstr = null;
+		if (cwdPtr) {
+			cwdstr = UTF8ToString(cwdPtr);
+		} else {
+			try {
+				const vfsCwd = FS.cwd();
+				const lookup = FS.lookupPath(vfsCwd);
+				if (
+					typeof NODEFS !== 'undefined' &&
+					lookup.node.mount.type === NODEFS
+				) {
+					cwdstr = NODEFS.realPath(lookup.node);
+				}
+			} catch (e) {}
+		}
 		let envObject = null;
 		if (envLength) {
 			envObject = {};
@@ -24963,13 +24977,13 @@ export function init(RuntimeName, PHPLoader) {
 		___cxa_rethrow_primary_exception;
 	Module['___syscall_shutdown'] = ___syscall_shutdown;
 	var ASM_CONSTS = {
-		12292545: ($0) => {
+		12292609: ($0) => {
 			if (!$0) {
 				AL.alcErr = 40964;
 				return 1;
 			}
 		},
-		12292593: ($0) => {
+		12292657: ($0) => {
 			if (!AL.currentCtx) {
 				err('alGetProcAddress() called without a valid context');
 				return 1;

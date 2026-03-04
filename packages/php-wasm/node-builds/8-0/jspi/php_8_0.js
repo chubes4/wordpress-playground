@@ -15,7 +15,7 @@ const currentDirPath =
 		: path.dirname(fileURLToPath(import.meta.url));
 const dependencyFilename = path.join(currentDirPath, '8_0_30', 'php_8_0.wasm');
 export { dependencyFilename };
-export const dependenciesTotalSize = 18491652;
+export const dependenciesTotalSize = 22718277;
 const phpVersionString = '8.0.30';
 export function init(RuntimeName, PHPLoader) {
 	// The rest of the code comes from the built php.js file and esm-suffix.js
@@ -8946,7 +8946,35 @@ export function init(RuntimeName, PHPLoader) {
 				argsArray.push(UTF8ToString(HEAPU32[charPointer >> 2]));
 			}
 		}
-		const cwdstr = cwdPtr ? UTF8ToString(cwdPtr) : FS.cwd();
+
+		/*
+		 * The Emscripten VFS CWD may point to a MEMFS path like
+		 * /internal/ that doesn't exist on the host filesystem.
+		 * Passing such a path to child_process.spawn() would cause
+		 * ENOENT errors, so we only forward VFS CWD when it maps
+		 * to a real NODEFS path on the host. When omitted,
+		 * spawn() defaults to process.cwd().
+		 */
+		let cwdstr = null;
+		if (cwdPtr) {
+			cwdstr = UTF8ToString(cwdPtr);
+		} else {
+			try {
+				const vfsCwd = FS.cwd();
+				const lookup = FS.lookupPath(vfsCwd);
+				if (
+					typeof NODEFS !== 'undefined' &&
+					lookup.node.mount.type === NODEFS
+				) {
+					cwdstr = NODEFS.realPath(lookup.node);
+				}
+			} catch (e) {
+				/*
+				 * FS.lookupPath() will throw an error for unknown paths.
+				 * In that case, we leave cwdstr as null to let spawn() use the default CWD.
+				 */
+			}
+		}
 		let envObject = null;
 		if (envLength) {
 			envObject = {};
@@ -9927,6 +9955,24 @@ export function init(RuntimeName, PHPLoader) {
 	// end include: postlibrary.js
 	var ASM_CONSTS = {};
 
+	var ASM_CONSTS = {
+		12337202: ($0) => {
+			if (!$0) {
+				AL.alcErr = 0xa004;
+				return 1;
+			}
+		},
+		12337250: ($0) => {
+			if (!AL.currentCtx) {
+				err('alGetProcAddress() called without a valid context');
+				return 1;
+			}
+			if (!$0) {
+				AL.currentCtx.err = 0xa003;
+				return 1;
+			}
+		},
+	};
 	function __asyncjs__js_popen_to_file(command, mode, exitCodePtr) {
 		return Asyncify.handleAsync(async () => {
 			const returnCallback = (resolver) => new Promise(resolver);
@@ -11587,121 +11633,7 @@ export function init(RuntimeName, PHPLoader) {
 		___c_longjmp = Module['___c_longjmp'] = wasmExports['__c_longjmp'];
 	}
 
-	var _spl_ce_RuntimeException = (Module['_spl_ce_RuntimeException'] =
-		12090876);
-
-	var _core_globals = (Module['_core_globals'] = 12134240);
-
-	var _php_ini_opened_path = (Module['_php_ini_opened_path'] = 11991648);
-
-	var _php_ini_scanned_path = (Module['_php_ini_scanned_path'] = 11991652);
-
-	var _php_ini_scanned_files = (Module['_php_ini_scanned_files'] = 11991656);
-
-	var _sapi_module = (Module['_sapi_module'] = 12075084);
-
-	var _sapi_globals = (Module['_sapi_globals'] = 12075232);
-
-	var _compiler_globals = (Module['_compiler_globals'] = 12136992);
-
-	var _executor_globals = (Module['_executor_globals'] = 12137368);
-
-	var _zend_compile_file = (Module['_zend_compile_file'] = 12138528);
-
-	var _zend_execute_ex = (Module['_zend_execute_ex'] = 12136880);
-
-	var _zend_execute_internal = (Module['_zend_execute_internal'] = 12136884);
-
-	var _empty_fcall_info = (Module['_empty_fcall_info'] = 9351816);
-
-	var _empty_fcall_info_cache = (Module['_empty_fcall_info_cache'] = 9351864);
-
-	var _zend_write = (Module['_zend_write'] = 12136920);
-
-	var _zend_error_cb = (Module['_zend_error_cb'] = 12136928);
-
-	var _zend_post_startup_cb = (Module['_zend_post_startup_cb'] = 12136900);
-
-	var _module_registry = (Module['_module_registry'] = 12135768);
-
-	var _zend_extensions = (Module['_zend_extensions'] = 12135096);
-
-	var _zend_empty_array = (Module['_zend_empty_array'] = 11645704);
-
-	var _zend_pass_function = (Module['_zend_pass_function'] = 11631052);
-
-	var _zend_ce_aggregate = (Module['_zend_ce_aggregate'] = 11987208);
-
-	var _zend_ce_iterator = (Module['_zend_ce_iterator'] = 11987212);
-
-	var _zend_ce_countable = (Module['_zend_ce_countable'] = 11987224);
-
-	var _zend_ce_exception = (Module['_zend_ce_exception'] = 12135288);
-
-	var _zend_ce_error = (Module['_zend_ce_error'] = 12135404);
-
-	var _zend_ce_throwable = (Module['_zend_ce_throwable'] = 12135272);
-
-	var _zend_throw_exception_hook = (Module['_zend_throw_exception_hook'] =
-		12135284);
-
-	var _gc_collect_cycles = (Module['_gc_collect_cycles'] = 11986772);
-
-	var _zend_ce_closure = (Module['_zend_ce_closure'] = 12131960);
-
-	var _zend_empty_string = (Module['_zend_empty_string'] = 11985632);
-
-	var _zend_known_strings = (Module['_zend_known_strings'] = 11985636);
-
-	var _zend_string_init_interned = (Module['_zend_string_init_interned'] =
-		11985700);
-
-	var _zend_one_char_string = (Module['_zend_one_char_string'] = 11985712);
-
-	var _std_object_handlers = (Module['_std_object_handlers'] = 11645236);
-
-	var ___memory_base = (Module['___memory_base'] = 0);
-
-	var ___table_base = (Module['___table_base'] = 1);
-
-	var _stderr = (Module['_stderr'] = 11978512);
-
-	var _stdin = (Module['_stdin'] = 11978664);
-
-	var _stdout = (Module['_stdout'] = 11978816);
-
-	var _z_errmsg = (Module['_z_errmsg'] = 11647216);
-
-	var _timezone = (Module['_timezone'] = 12173392);
-
-	var _tzname = (Module['_tzname'] = 12173400);
-
-	var ___heap_base = 13235712;
-
-	var __ZNSt3__25ctypeIcE2idE = (Module['__ZNSt3__25ctypeIcE2idE'] =
-		12187116);
-
-	var __ZSt7nothrow = (Module['__ZSt7nothrow'] = 11233178);
-
-	var __ZTVN10__cxxabiv120__si_class_type_infoE = (Module[
-		'__ZTVN10__cxxabiv120__si_class_type_infoE'
-	] = 11979104);
-
-	var __ZTVN10__cxxabiv117__class_type_infoE = (Module[
-		'__ZTVN10__cxxabiv117__class_type_infoE'
-	] = 11979064);
-
-	var __ZTVN10__cxxabiv121__vmi_class_type_infoE = (Module[
-		'__ZTVN10__cxxabiv121__vmi_class_type_infoE'
-	] = 11979156);
-
-	var __ZTISt20bad_array_new_length = (Module[
-		'__ZTISt20bad_array_new_length'
-	] = 11979276);
-
-	var __ZTVSt12length_error = (Module['__ZTVSt12length_error'] = 11979352);
-
-	var __ZTISt12length_error = (Module['__ZTISt12length_error'] = 11979372);
+	var ___heap_base = 13623264;
 
 	var wasmImports = {
 		/** @export */ __assert_fail: ___assert_fail,
