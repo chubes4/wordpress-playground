@@ -15,7 +15,7 @@ const currentDirPath =
 		: path.dirname(fileURLToPath(import.meta.url));
 const dependencyFilename = path.join(currentDirPath, '8_0_30', 'php_8_0.wasm');
 export { dependencyFilename };
-export const dependenciesTotalSize = 18491632;
+export const dependenciesTotalSize = 18491752;
 const phpVersionString = '8.0.30';
 export function init(RuntimeName, PHPLoader) {
 	// The rest of the code comes from the built php.js file and esm-suffix.js
@@ -10682,6 +10682,7 @@ export function init(RuntimeName, PHPLoader) {
 		_wasm_set_content_length,
 		_wasm_set_cookies,
 		_wasm_set_request_port,
+		_wasm_set_request_no_chdir,
 		_wasm_sapi_request_shutdown,
 		_wasm_sapi_handle_request,
 		_php_wasm_init,
@@ -11507,6 +11508,8 @@ export function init(RuntimeName, PHPLoader) {
 			wasmExports['wasm_set_cookies'];
 		_wasm_set_request_port = Module['_wasm_set_request_port'] =
 			wasmExports['wasm_set_request_port'];
+		_wasm_set_request_no_chdir = Module['_wasm_set_request_no_chdir'] =
+			wasmExports['wasm_set_request_no_chdir'];
 		_wasm_sapi_request_shutdown = Module['_wasm_sapi_request_shutdown'] =
 			wasmExports['wasm_sapi_request_shutdown'];
 		_wasm_sapi_handle_request = Module['_wasm_sapi_handle_request'] =
@@ -11693,14 +11696,14 @@ export function init(RuntimeName, PHPLoader) {
 
 	var _z_errmsg = (Module['_z_errmsg'] = 11647216);
 
-	var _timezone = (Module['_timezone'] = 12173392);
+	var _timezone = (Module['_timezone'] = 12173408);
 
-	var _tzname = (Module['_tzname'] = 12173400);
+	var _tzname = (Module['_tzname'] = 12173416);
 
-	var ___heap_base = 13235712;
+	var ___heap_base = 13235728;
 
 	var __ZNSt3__25ctypeIcE2idE = (Module['__ZNSt3__25ctypeIcE2idE'] =
-		12187116);
+		12187132);
 
 	var __ZSt7nothrow = (Module['__ZSt7nothrow'] = 11233178);
 
