@@ -15,7 +15,7 @@ const currentDirPath =
 		: path.dirname(fileURLToPath(import.meta.url));
 const dependencyFilename = path.join(currentDirPath, '8_2_30', 'php_8_2.wasm');
 export { dependencyFilename };
-export const dependenciesTotalSize = 26936388;
+export const dependenciesTotalSize = 22415687;
 const phpVersionString = '8.2.30';
 export function init(RuntimeName, PHPLoader) {
 	// The rest of the code comes from the built php.js file and esm-suffix.js
@@ -8962,7 +8962,6 @@ export function init(RuntimeName, PHPLoader) {
 				argsArray.push(UTF8ToString(HEAPU32[charPointer >> 2]));
 			}
 		}
-
 		/*
 		 * The Emscripten VFS CWD may point to a MEMFS path like
 		 * /internal/ that doesn't exist on the host filesystem.
@@ -8970,8 +8969,7 @@ export function init(RuntimeName, PHPLoader) {
 		 * ENOENT errors, so we only forward VFS CWD when it maps
 		 * to a real NODEFS path on the host. When omitted,
 		 * spawn() defaults to process.cwd().
-		 */
-		let cwdstr = null;
+		 */ let cwdstr = null;
 		if (cwdPtr) {
 			cwdstr = UTF8ToString(cwdPtr);
 		} else {
@@ -8984,12 +8982,7 @@ export function init(RuntimeName, PHPLoader) {
 				) {
 					cwdstr = NODEFS.realPath(lookup.node);
 				}
-			} catch (e) {
-				/*
-				 * FS.lookupPath() will throw an error for unknown paths.
-				 * In that case, we leave cwdstr as null to let spawn() use the default CWD.
-				 */
-			}
+			} catch (e) {}
 		}
 		let envObject = null;
 		if (envLength) {
@@ -9975,24 +9968,6 @@ export function init(RuntimeName, PHPLoader) {
 	// end include: postlibrary.js
 	var ASM_CONSTS = {};
 
-	var ASM_CONSTS = {
-		13131602: ($0) => {
-			if (!$0) {
-				AL.alcErr = 0xa004;
-				return 1;
-			}
-		},
-		13131650: ($0) => {
-			if (!AL.currentCtx) {
-				err('alGetProcAddress() called without a valid context');
-				return 1;
-			}
-			if (!$0) {
-				AL.currentCtx.err = 0xa003;
-				return 1;
-			}
-		},
-	};
 	function __asyncjs__js_popen_to_file(command, mode, exitCodePtr) {
 		return Asyncify.handleAsync(async () => {
 			const returnCallback = (resolver) => new Promise(resolver);
@@ -11621,7 +11596,121 @@ export function init(RuntimeName, PHPLoader) {
 		___c_longjmp = Module['___c_longjmp'] = wasmExports['__c_longjmp'];
 	}
 
-	var ___heap_base = 14718432;
+	var _spl_ce_RuntimeException = (Module['_spl_ce_RuntimeException'] =
+		12861564);
+
+	var _core_globals = (Module['_core_globals'] = 12905024);
+
+	var _php_ini_opened_path = (Module['_php_ini_opened_path'] = 12765152);
+
+	var _php_ini_scanned_path = (Module['_php_ini_scanned_path'] = 12765156);
+
+	var _php_ini_scanned_files = (Module['_php_ini_scanned_files'] = 12765160);
+
+	var _sapi_module = (Module['_sapi_module'] = 12846312);
+
+	var _sapi_globals = (Module['_sapi_globals'] = 12846456);
+
+	var _compiler_globals = (Module['_compiler_globals'] = 12908352);
+
+	var _executor_globals = (Module['_executor_globals'] = 12908736);
+
+	var _zend_compile_file = (Module['_zend_compile_file'] = 12909944);
+
+	var _zend_execute_ex = (Module['_zend_execute_ex'] = 12908160);
+
+	var _zend_execute_internal = (Module['_zend_execute_internal'] = 12908164);
+
+	var _empty_fcall_info = (Module['_empty_fcall_info'] = 9388024);
+
+	var _empty_fcall_info_cache = (Module['_empty_fcall_info_cache'] = 9388072);
+
+	var _zend_write = (Module['_zend_write'] = 12908276);
+
+	var _zend_error_cb = (Module['_zend_error_cb'] = 12908280);
+
+	var _zend_post_startup_cb = (Module['_zend_post_startup_cb'] = 12908260);
+
+	var _module_registry = (Module['_module_registry'] = 12908176);
+
+	var _zend_extensions = (Module['_zend_extensions'] = 12905864);
+
+	var _zend_empty_array = (Module['_zend_empty_array'] = 12257888);
+
+	var _zend_pass_function = (Module['_zend_pass_function'] = 12243072);
+
+	var _zend_ce_aggregate = (Module['_zend_ce_aggregate'] = 12760328);
+
+	var _zend_ce_iterator = (Module['_zend_ce_iterator'] = 12760332);
+
+	var _zend_ce_countable = (Module['_zend_ce_countable'] = 12760344);
+
+	var _zend_ce_exception = (Module['_zend_ce_exception'] = 12906120);
+
+	var _zend_ce_error = (Module['_zend_ce_error'] = 12906236);
+
+	var _zend_ce_throwable = (Module['_zend_ce_throwable'] = 12906104);
+
+	var _zend_throw_exception_hook = (Module['_zend_throw_exception_hook'] =
+		12906116);
+
+	var _gc_collect_cycles = (Module['_gc_collect_cycles'] = 12907116);
+
+	var _zend_ce_closure = (Module['_zend_ce_closure'] = 12866780);
+
+	var _zend_empty_string = (Module['_zend_empty_string'] = 12758800);
+
+	var _zend_known_strings = (Module['_zend_known_strings'] = 12758804);
+
+	var _zend_string_init_interned = (Module['_zend_string_init_interned'] =
+		12758868);
+
+	var _zend_one_char_string = (Module['_zend_one_char_string'] = 12758880);
+
+	var _std_object_handlers = (Module['_std_object_handlers'] = 11839328);
+
+	var ___memory_base = (Module['___memory_base'] = 0);
+
+	var ___table_base = (Module['___table_base'] = 1);
+
+	var _stderr = (Module['_stderr'] = 12751680);
+
+	var _stdin = (Module['_stdin'] = 12751832);
+
+	var _stdout = (Module['_stdout'] = 12751984);
+
+	var _z_errmsg = (Module['_z_errmsg'] = 12259408);
+
+	var _timezone = (Module['_timezone'] = 13245232);
+
+	var _tzname = (Module['_tzname'] = 13245240);
+
+	var ___heap_base = 14307504;
+
+	var __ZNSt3__25ctypeIcE2idE = (Module['__ZNSt3__25ctypeIcE2idE'] =
+		13258908);
+
+	var __ZSt7nothrow = (Module['__ZSt7nothrow'] = 11837162);
+
+	var __ZTVN10__cxxabiv120__si_class_type_infoE = (Module[
+		'__ZTVN10__cxxabiv120__si_class_type_infoE'
+	] = 12752272);
+
+	var __ZTVN10__cxxabiv117__class_type_infoE = (Module[
+		'__ZTVN10__cxxabiv117__class_type_infoE'
+	] = 12752232);
+
+	var __ZTVN10__cxxabiv121__vmi_class_type_infoE = (Module[
+		'__ZTVN10__cxxabiv121__vmi_class_type_infoE'
+	] = 12752324);
+
+	var __ZTISt20bad_array_new_length = (Module[
+		'__ZTISt20bad_array_new_length'
+	] = 12752444);
+
+	var __ZTVSt12length_error = (Module['__ZTVSt12length_error'] = 12752520);
+
+	var __ZTISt12length_error = (Module['__ZTISt12length_error'] = 12752540);
 
 	var wasmImports = {
 		/** @export */ __assert_fail: ___assert_fail,

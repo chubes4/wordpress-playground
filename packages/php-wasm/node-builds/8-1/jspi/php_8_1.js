@@ -15,7 +15,7 @@ const currentDirPath =
 		: path.dirname(fileURLToPath(import.meta.url));
 const dependencyFilename = path.join(currentDirPath, '8_1_34', 'php_8_1.wasm');
 export { dependencyFilename };
-export const dependenciesTotalSize = 26663905;
+export const dependenciesTotalSize = 22160511;
 const phpVersionString = '8.1.34';
 export function init(RuntimeName, PHPLoader) {
 	// The rest of the code comes from the built php.js file and esm-suffix.js
@@ -8960,7 +8960,6 @@ export function init(RuntimeName, PHPLoader) {
 				argsArray.push(UTF8ToString(HEAPU32[charPointer >> 2]));
 			}
 		}
-
 		/*
 		 * The Emscripten VFS CWD may point to a MEMFS path like
 		 * /internal/ that doesn't exist on the host filesystem.
@@ -8968,8 +8967,7 @@ export function init(RuntimeName, PHPLoader) {
 		 * ENOENT errors, so we only forward VFS CWD when it maps
 		 * to a real NODEFS path on the host. When omitted,
 		 * spawn() defaults to process.cwd().
-		 */
-		let cwdstr = null;
+		 */ let cwdstr = null;
 		if (cwdPtr) {
 			cwdstr = UTF8ToString(cwdPtr);
 		} else {
@@ -8982,12 +8980,7 @@ export function init(RuntimeName, PHPLoader) {
 				) {
 					cwdstr = NODEFS.realPath(lookup.node);
 				}
-			} catch (e) {
-				/*
-				 * FS.lookupPath() will throw an error for unknown paths.
-				 * In that case, we leave cwdstr as null to let spawn() use the default CWD.
-				 */
-			}
+			} catch (e) {}
 		}
 		let envObject = null;
 		if (envLength) {

@@ -1,6 +1,6 @@
 import dependencyFilename from './8_0_30/php_8_0.wasm';
 export { dependencyFilename };
-export const dependenciesTotalSize = 20235006;
+export const dependenciesTotalSize = 16722480;
 const phpVersionString = '8.0.30';
 export function init(RuntimeName, PHPLoader) {
 	// The rest of the code comes from the built php.js file and esm-suffix.js
@@ -7696,32 +7696,7 @@ export function init(RuntimeName, PHPLoader) {
 	Module['FS'] = FS;
 	Module['_exit'] = _exit;
 	Module['_emscripten_sleep'] = _emscripten_sleep;
-	Module['_setTempRet0'] = _setTempRet0;
-	Module['_getTempRet0'] = _getTempRet0;
-	Module['__Unwind_RaiseException'] = __Unwind_RaiseException;
-	Module['__Unwind_DeleteException'] = __Unwind_DeleteException;
-	Module['_sched_yield'] = _sched_yield;
-	Module['___syscall_shutdown'] = ___syscall_shutdown;
-	Module['_recv'] = _recv;
-	Module['_setsockopt'] = _setsockopt;
-	var ASM_CONSTS = {
-		12293170: ($0) => {
-			if (!$0) {
-				AL.alcErr = 40964;
-				return 1;
-			}
-		},
-		12293218: ($0) => {
-			if (!AL.currentCtx) {
-				err('alGetProcAddress() called without a valid context');
-				return 1;
-			}
-			if (!$0) {
-				AL.currentCtx.err = 40963;
-				return 1;
-			}
-		},
-	};
+	var ASM_CONSTS = {};
 	function __asyncjs__js_popen_to_file(command, mode, exitCodePtr) {
 		return Asyncify.handleAsync(async () => {
 			const returnCallback = (resolver) => new Promise(resolver);
@@ -8756,7 +8731,37 @@ export function init(RuntimeName, PHPLoader) {
 		__indirect_function_table = wasmTable =
 			wasmExports['__indirect_function_table'];
 	}
-	var ___heap_base = 13573728;
+	var _executor_globals = (Module['_executor_globals'] = 12088328);
+	var _zend_ce_aggregate = (Module['_zend_ce_aggregate'] = 11943640);
+	var _zend_ce_iterator = (Module['_zend_ce_iterator'] = 11943644);
+	var _zend_ce_countable = (Module['_zend_ce_countable'] = 11943656);
+	var _zend_ce_exception = (Module['_zend_ce_exception'] = 12086248);
+	var _zend_empty_string = (Module['_zend_empty_string'] = 11942064);
+	var _zend_string_init_interned = (Module['_zend_string_init_interned'] =
+		11942132);
+	var _std_object_handlers = (Module['_std_object_handlers'] = 11601668);
+	var ___memory_base = (Module['___memory_base'] = 0);
+	var ___table_base = (Module['___table_base'] = 1);
+	var _stdout = (Module['_stdout'] = 11935248);
+	var _timezone = (Module['_timezone'] = 12124352);
+	var _tzname = (Module['_tzname'] = 12124360);
+	var ___heap_base = 13186672;
+	var __ZNSt3__25ctypeIcE2idE = (Module['__ZNSt3__25ctypeIcE2idE'] =
+		12138076);
+	var __ZTVN10__cxxabiv120__si_class_type_infoE = (Module[
+		'__ZTVN10__cxxabiv120__si_class_type_infoE'
+	] = 11935536);
+	var __ZTVN10__cxxabiv117__class_type_infoE = (Module[
+		'__ZTVN10__cxxabiv117__class_type_infoE'
+	] = 11935496);
+	var __ZTVN10__cxxabiv121__vmi_class_type_infoE = (Module[
+		'__ZTVN10__cxxabiv121__vmi_class_type_infoE'
+	] = 11935588);
+	var __ZTISt20bad_array_new_length = (Module[
+		'__ZTISt20bad_array_new_length'
+	] = 11935708);
+	var __ZTVSt12length_error = (Module['__ZTVSt12length_error'] = 11935784);
+	var __ZTISt12length_error = (Module['__ZTISt12length_error'] = 11935804);
 	var wasmImports = {
 		__assert_fail: ___assert_fail,
 		__asyncjs__js_module_onMessage,
