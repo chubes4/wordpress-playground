@@ -141,12 +141,15 @@ export async function convertFetchEventToPHPRequest(event: FetchEvent) {
 
 	let responseBody: ReadableStream<Uint8Array> | Uint8Array | null = null;
 	if (!isNullBodyCode) {
+		// Don't stream HTML pages – Chrome view transitions are
+		// animating to the partially streamed state. This makes the
+		// UI elements appear one by one in a fast progression and
+		// feels weird.
 		if (phpResponse.bodyPort && !isHtmlContentType(phpResponse.headers['content-type'])) {
-			// Don't stream HTML pages – Chrome view transitions are
-			// animating to the partially streamed state. This makes the
-			// UI elements appear one by one in a fast progression and
-			// feels weird.
-			responseBody = stream;
+			// Reconstruct the body ReadableStream from the MessagePort.
+			// We couldn't just transfer it directly as this kind of transfer
+			// doesn't seem to be supported between the document and the service worker.
+			responseBody = portToStream(phpResponse.bodyPort);
 		} else {
 			// Fallback: buffered response bytes
 			responseBody = phpResponse.bytes;
