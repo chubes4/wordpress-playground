@@ -145,7 +145,16 @@ export async function convertFetchEventToPHPRequest(event: FetchEvent) {
 			// Reconstruct the body ReadableStream from the MessagePort.
 			// We couldn't just transfer it directly as this kind of transfer
 			// doesn't seem to be supported between the document and the service worker.
-			responseBody = portToStream(phpResponse.bodyPort);
+			const stream = portToStream(phpResponse.bodyPort);
+
+			// Buffer HTML responses fully before returning them. Streaming
+			// a partially-rendered page can cause the browser to display
+			// broken markup while PHP is still producing output.
+			if (isHtmlContentType(phpResponse.headers['content-type'])) {
+				responseBody = await streamToUint8Array(stream);
+			} else {
+				responseBody = stream;
+			}
 		} else {
 			// Fallback: buffered response bytes
 			responseBody = phpResponse.bytes;
@@ -299,6 +308,51 @@ export function getRequestHeaders(request: Request) {
 		headers[key] = value;
 	});
 	return headers;
+}
+
+/**
+ * Checks whether a Content-Type header value list indicates an HTML response.
+ * Handles the value being a string, an array of strings, or undefined/null,
+ * and ignores parameters like `charset=utf-8` after the MIME type.
+ */
+export function isHtmlContentType(
+	contentType: string | string[] | undefined | null
+): boolean {
+	if (!contentType) {
+		return false;
+	}
+	const value = Array.isArray(contentType) ? contentType[0] : contentType;
+	if (!value) {
+		return false;
+	}
+	// Extract the MIME type before any semicolon (e.g. "text/html; charset=utf-8")
+	const mime = value.split(';', 1)[0].trim().toLowerCase();
+	return mime === 'text/html';
+}
+
+/**
+ * Reads a ReadableStream to completion and returns the concatenated bytes
+ * as a single Uint8Array.
+ */
+async function streamToUint8Array(
+	stream: ReadableStream<Uint8Array>
+): Promise<Uint8Array> {
+	const reader = stream.getReader();
+	const chunks: Uint8Array[] = [];
+	let totalLength = 0;
+	for (;;) {
+		const { done, value } = await reader.read();
+		if (done) break;
+		chunks.push(value);
+		totalLength += value.byteLength;
+	}
+	const result = new Uint8Array(totalLength);
+	let offset = 0;
+	for (const chunk of chunks) {
+		result.set(chunk, offset);
+		offset += chunk.byteLength;
+	}
+	return result;
 }
 
 /**

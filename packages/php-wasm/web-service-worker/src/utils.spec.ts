@@ -1,6 +1,7 @@
 import {
 	cloneRequest,
 	getRequestHeaders,
+	isHtmlContentType,
 	removeContentSecurityPolicyDirective,
 } from './utils';
 
@@ -30,6 +31,46 @@ describe('getRequestHeaders', () => {
 			'content-type': 'text/plain',
 			'x-wp-nonce': '123456',
 		});
+	});
+});
+
+describe('isHtmlContentType', () => {
+	it('should detect text/html', () => {
+		expect(isHtmlContentType('text/html')).toBe(true);
+	});
+
+	it('should detect text/html with charset parameter', () => {
+		expect(isHtmlContentType('text/html; charset=utf-8')).toBe(true);
+	});
+
+	it('should be case-insensitive', () => {
+		expect(isHtmlContentType('Text/HTML')).toBe(true);
+		expect(isHtmlContentType('TEXT/HTML; charset=UTF-8')).toBe(true);
+	});
+
+	it('should accept an array of strings', () => {
+		expect(isHtmlContentType(['text/html'])).toBe(true);
+		expect(isHtmlContentType(['text/html; charset=utf-8'])).toBe(true);
+	});
+
+	it('should return false for non-HTML content types', () => {
+		expect(isHtmlContentType('application/json')).toBe(false);
+		expect(isHtmlContentType('text/plain')).toBe(false);
+		expect(isHtmlContentType('image/png')).toBe(false);
+	});
+
+	it('should return false for undefined or null', () => {
+		expect(isHtmlContentType(undefined)).toBe(false);
+		expect(isHtmlContentType(null)).toBe(false);
+	});
+
+	it('should return false for an empty array', () => {
+		expect(isHtmlContentType([])).toBe(false);
+	});
+
+	it('should handle whitespace around the MIME type', () => {
+		expect(isHtmlContentType('  text/html  ')).toBe(true);
+		expect(isHtmlContentType('  text/html ; charset=utf-8')).toBe(true);
 	});
 });
 
