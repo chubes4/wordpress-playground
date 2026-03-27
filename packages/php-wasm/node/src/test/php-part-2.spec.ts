@@ -1193,6 +1193,16 @@ describe('sandboxedSpawnHandlerFactory', () => {
 						processManager.acquirePHPInstance()
 					)
 				);
+				// Match production behavior (boot.ts): enable runtime
+				// rotation on subprocess instances. Rotation won't
+				// actually trigger for CLI-only instances (the C-level
+				// fixes allow repeated run_cli() calls), but we enable
+				// it to mirror the real configuration.
+				php.enableRuntimeRotation({
+					recreateRuntime: () =>
+						loadNodeRuntime(phpVersion as any, {}),
+					maxRequests: 400,
+				});
 				return php;
 			},
 			maxPhpInstances: 5,
@@ -1244,4 +1254,30 @@ describe('sandboxedSpawnHandlerFactory', () => {
 			['README.md', 'code', ''].join('\n')
 		);
 	});
+
+	it('Should be able to call proc_open(php ...) multiple times in a row', async () => {
+		const response = await php.run({
+			code: `<?php
+				$results = [];
+				for ($i = 1; $i <= 3; $i++) {
+					$descriptorspec = [
+						1 => ["pipe", "w"],
+						2 => ["pipe", "w"]
+					];
+					$proc = proc_open(
+						'php -r "echo ' . $i . ';"',
+						$descriptorspec,
+						$pipes
+					);
+					$stdout = stream_get_contents($pipes[1]);
+					fclose($pipes[1]);
+					fclose($pipes[2]);
+					proc_close($proc);
+					$results[] = $stdout;
+				}
+				echo implode(',', $results);
+			`,
+		});
+		expect(response.text).toEqual('1,2,3');
+	}, 60000);
 });

@@ -1,6 +1,6 @@
 import dependencyFilename from './7_4_33/php_7_4.wasm';
 export { dependencyFilename };
-export const dependenciesTotalSize = 16451164;
+export const dependenciesTotalSize = 16451093;
 const phpVersionString = '7.4.33';
 export function init(RuntimeName, PHPLoader) {
 	// The rest of the code comes from the built php.js file and esm-suffix.js
@@ -6944,21 +6944,7 @@ export function init(RuntimeName, PHPLoader) {
 				argsArray.push(UTF8ToString(HEAPU32[charPointer >> 2]));
 			}
 		}
-		let cwdstr = null;
-		if (cwdPtr) {
-			cwdstr = UTF8ToString(cwdPtr);
-		} else {
-			try {
-				const vfsCwd = FS.cwd();
-				const lookup = FS.lookupPath(vfsCwd);
-				if (
-					typeof NODEFS !== 'undefined' &&
-					lookup.node.mount.type === NODEFS
-				) {
-					cwdstr = NODEFS.realPath(lookup.node);
-				}
-			} catch (e) {}
-		}
+		const cwdstr = cwdPtr ? UTF8ToString(cwdPtr) : FS.cwd();
 		let envObject = null;
 		if (envLength) {
 			envObject = {};
@@ -8209,7 +8195,6 @@ export function init(RuntimeName, PHPLoader) {
 		_wasm_set_content_length,
 		_wasm_set_cookies,
 		_wasm_set_request_port,
-		_wasm_set_request_no_chdir,
 		_wasm_sapi_request_shutdown,
 		_wasm_sapi_handle_request,
 		_php_wasm_init,
@@ -8618,8 +8603,6 @@ export function init(RuntimeName, PHPLoader) {
 			wasmExports['wasm_set_cookies'];
 		_wasm_set_request_port = Module['_wasm_set_request_port'] =
 			wasmExports['wasm_set_request_port'];
-		_wasm_set_request_no_chdir = Module['_wasm_set_request_no_chdir'] =
-			wasmExports['wasm_set_request_no_chdir'];
 		_wasm_sapi_request_shutdown = Module['_wasm_sapi_request_shutdown'] =
 			wasmExports['wasm_sapi_request_shutdown'];
 		_wasm_sapi_handle_request = Module['_wasm_sapi_handle_request'] =

@@ -15,7 +15,7 @@ const currentDirPath =
 		: path.dirname(fileURLToPath(import.meta.url));
 const dependencyFilename = path.join(currentDirPath, '8_1_34', 'php_8_1.wasm');
 export { dependencyFilename };
-export const dependenciesTotalSize = 22160630;
+export const dependenciesTotalSize = 22160529;
 const phpVersionString = '8.1.34';
 export function init(RuntimeName, PHPLoader) {
 	// The rest of the code comes from the built php.js file and esm-suffix.js
@@ -8960,28 +8960,7 @@ export function init(RuntimeName, PHPLoader) {
 				argsArray.push(UTF8ToString(HEAPU32[charPointer >> 2]));
 			}
 		}
-		/*
-		 * The Emscripten VFS CWD may point to a MEMFS path like
-		 * /internal/ that doesn't exist on the host filesystem.
-		 * Passing such a path to child_process.spawn() would cause
-		 * ENOENT errors, so we only forward VFS CWD when it maps
-		 * to a real NODEFS path on the host. When omitted,
-		 * spawn() defaults to process.cwd().
-		 */ let cwdstr = null;
-		if (cwdPtr) {
-			cwdstr = UTF8ToString(cwdPtr);
-		} else {
-			try {
-				const vfsCwd = FS.cwd();
-				const lookup = FS.lookupPath(vfsCwd);
-				if (
-					typeof NODEFS !== 'undefined' &&
-					lookup.node.mount.type === NODEFS
-				) {
-					cwdstr = NODEFS.realPath(lookup.node);
-				}
-			} catch (e) {}
-		}
+		const cwdstr = cwdPtr ? UTF8ToString(cwdPtr) : FS.cwd();
 		let envObject = null;
 		if (envLength) {
 			envObject = {};
@@ -10698,7 +10677,6 @@ export function init(RuntimeName, PHPLoader) {
 		_wasm_set_content_length,
 		_wasm_set_cookies,
 		_wasm_set_request_port,
-		_wasm_set_request_no_chdir,
 		_wasm_sapi_request_shutdown,
 		_wasm_sapi_handle_request,
 		_php_wasm_init,
@@ -11519,8 +11497,6 @@ export function init(RuntimeName, PHPLoader) {
 			wasmExports['wasm_set_cookies'];
 		_wasm_set_request_port = Module['_wasm_set_request_port'] =
 			wasmExports['wasm_set_request_port'];
-		_wasm_set_request_no_chdir = Module['_wasm_set_request_no_chdir'] =
-			wasmExports['wasm_set_request_no_chdir'];
 		_wasm_sapi_request_shutdown = Module['_wasm_sapi_request_shutdown'] =
 			wasmExports['wasm_sapi_request_shutdown'];
 		_wasm_sapi_handle_request = Module['_wasm_sapi_handle_request'] =
@@ -11704,14 +11680,14 @@ export function init(RuntimeName, PHPLoader) {
 
 	var _z_errmsg = (Module['_z_errmsg'] = 12221552);
 
-	var _timezone = (Module['_timezone'] = 13208608);
+	var _timezone = (Module['_timezone'] = 13208592);
 
-	var _tzname = (Module['_tzname'] = 13208616);
+	var _tzname = (Module['_tzname'] = 13208600);
 
-	var ___heap_base = 14270880;
+	var ___heap_base = 14270864;
 
 	var __ZNSt3__25ctypeIcE2idE = (Module['__ZNSt3__25ctypeIcE2idE'] =
-		13222284);
+		13222268);
 
 	var __ZSt7nothrow = (Module['__ZSt7nothrow'] = 11801866);
 

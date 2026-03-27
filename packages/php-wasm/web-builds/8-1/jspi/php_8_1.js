@@ -1,6 +1,6 @@
 import dependencyFilename from './8_1_34/php_8_1.wasm';
 export { dependencyFilename };
-export const dependenciesTotalSize = 20221588;
+export const dependenciesTotalSize = 20221518;
 const phpVersionString = '8.1.34';
 export function init(RuntimeName, PHPLoader) {
 	// The rest of the code comes from the built php.js file and esm-suffix.js
@@ -6955,21 +6955,7 @@ export function init(RuntimeName, PHPLoader) {
 				argsArray.push(UTF8ToString(HEAPU32[charPointer >> 2]));
 			}
 		}
-		let cwdstr = null;
-		if (cwdPtr) {
-			cwdstr = UTF8ToString(cwdPtr);
-		} else {
-			try {
-				const vfsCwd = FS.cwd();
-				const lookup = FS.lookupPath(vfsCwd);
-				if (
-					typeof NODEFS !== 'undefined' &&
-					lookup.node.mount.type === NODEFS
-				) {
-					cwdstr = NODEFS.realPath(lookup.node);
-				}
-			} catch (e) {}
-		}
+		const cwdstr = cwdPtr ? UTF8ToString(cwdPtr) : FS.cwd();
 		let envObject = null;
 		if (envLength) {
 			envObject = {};
@@ -8229,7 +8215,6 @@ export function init(RuntimeName, PHPLoader) {
 		_wasm_set_content_length,
 		_wasm_set_cookies,
 		_wasm_set_request_port,
-		_wasm_set_request_no_chdir,
 		_wasm_sapi_request_shutdown,
 		_wasm_sapi_handle_request,
 		_php_wasm_init,
@@ -8654,8 +8639,6 @@ export function init(RuntimeName, PHPLoader) {
 			wasmExports['wasm_set_cookies'];
 		_wasm_set_request_port = Module['_wasm_set_request_port'] =
 			wasmExports['wasm_set_request_port'];
-		_wasm_set_request_no_chdir = Module['_wasm_set_request_no_chdir'] =
-			wasmExports['wasm_set_request_no_chdir'];
 		_wasm_sapi_request_shutdown = Module['_wasm_sapi_request_shutdown'] =
 			wasmExports['wasm_sapi_request_shutdown'];
 		_wasm_sapi_handle_request = Module['_wasm_sapi_handle_request'] =
@@ -8734,11 +8717,11 @@ export function init(RuntimeName, PHPLoader) {
 	var ___memory_base = (Module['___memory_base'] = 0);
 	var ___table_base = (Module['___table_base'] = 1);
 	var _stdout = (Module['_stdout'] = 12669008);
-	var _timezone = (Module['_timezone'] = 13159248);
-	var _tzname = (Module['_tzname'] = 13159256);
-	var ___heap_base = 14221520;
+	var _timezone = (Module['_timezone'] = 13159232);
+	var _tzname = (Module['_tzname'] = 13159240);
+	var ___heap_base = 14221504;
 	var __ZNSt3__25ctypeIcE2idE = (Module['__ZNSt3__25ctypeIcE2idE'] =
-		13172924);
+		13172908);
 	var __ZTVN10__cxxabiv120__si_class_type_infoE = (Module[
 		'__ZTVN10__cxxabiv120__si_class_type_infoE'
 	] = 12669296);
