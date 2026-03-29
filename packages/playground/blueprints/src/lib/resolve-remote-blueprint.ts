@@ -82,11 +82,7 @@ export async function resolveRemoteBlueprint(
 function findBlueprintJsonPath(entryPaths: string[]): string {
 	const normalized = entryPaths.map((p) => normalizePath(p));
 
-	if (
-		normalized.some(
-			(p) => basename(p) === 'blueprint.json' && dirname(p) === ''
-		)
-	) {
+	if (normalized.some((p) => basename(p) === 'blueprint.json' && dirname(p) === '')) {
 		return 'blueprint.json';
 	}
 
