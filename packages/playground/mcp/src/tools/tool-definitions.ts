@@ -13,7 +13,7 @@ export interface ToolAnnotations {
 	openWorldHint?: boolean;
 }
 
-export type ToolParamType = 'string' | 'boolean' | 'object';
+export type ToolParamType = 'string' | 'boolean' | 'object' | 'string_or_object';
 
 export interface ToolParam {
 	name: string;
@@ -90,19 +90,17 @@ export const toolDefinitions: Record<string, ToolDefinition> = {
 			auth needed.
 
 			Tool selection guide:
-			1. Use this tool (playground_request) with the
-			   REST API for standard content CRUD — posts,
-			   pages, users, terms, comments, settings, etc.
-			   The REST API handles serialization, pagination,
-			   and field filtering for you.
+			1. Use this tool with the REST API for content
+			   CRUD (posts, pages, users, settings, etc.)
+			   and for the Abilities API
+			   (/wp-json/wp-abilities/v1/abilities) which
+			   exposes structured actions from plugins and
+			   WordPress core.
 			2. Use playground_execute_php when the data you
-			   need is not exposed by the REST API (e.g.
-			   raw options, direct database queries, or
-			   custom table access).
+			   need is not exposed by the REST API.
 			3. Use this tool as a plain HTTP request (non-REST)
-			   when the HTTP layer itself matters: verifying
-			   redirects, status codes, cookies, or response
-			   headers.
+			   when the HTTP layer itself matters (redirects,
+			   status codes, cookies, headers).
 
 			The response JSON contains three fields:
 			- "text": the response body as a string
@@ -147,8 +145,8 @@ export const toolDefinitions: Record<string, ToolDefinition> = {
 			},
 			{
 				name: 'body',
-				type: 'string',
-				description: 'Request body (for POST/PUT requests)',
+				type: 'string_or_object',
+				description: 'Request body (for POST/PUT requests). Accepts a JSON string or an object.',
 				required: false,
 			},
 		],
@@ -531,10 +529,13 @@ export function paramsToJsonSchema(
 	const required: string[] = [];
 
 	for (const param of params) {
-		const prop: Record<string, unknown> = {
-			type: param.type,
-			description: param.description,
-		};
+		const prop: Record<string, unknown> = {};
+		if (param.type === 'string_or_object') {
+			prop['oneOf'] = [{ type: 'string' }, { type: 'object' }];
+		} else {
+			prop['type'] = param.type;
+		}
+		prop['description'] = param.description;
 		if (param.additionalProperties !== undefined) {
 			prop['additionalProperties'] = param.additionalProperties;
 		}
