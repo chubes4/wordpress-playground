@@ -1,6 +1,5 @@
-import { PHPWorker } from './php-worker';
-import { describe, expect, test, vi } from 'vitest';
-import type { PHP } from './php';
+import { PHPWorker } from '../lib/php-worker';
+import type { PHP } from '../lib/php';
 
 type PhpEvent = { type: string; [key: string]: unknown };
 type PhpEventListener = (event: PhpEvent) => void | Promise<void>;

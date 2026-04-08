@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { fetchWithCorsProxy } from './fetch-with-cors-proxy';
-import { FirewallInterferenceError } from './firewall-interference-error';
+import { fetchWithCorsProxy } from '../lib/fetch-with-cors-proxy';
+import { FirewallInterferenceError } from '../lib/firewall-interference-error';
 
 describe('fetchWithCorsProxy', () => {
 	afterEach(() => {

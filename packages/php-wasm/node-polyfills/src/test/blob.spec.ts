@@ -1,4 +1,4 @@
-import './blob';
+import '../lib/blob';
 
 describe('File class', () => {
 	it('Should exist', () => {

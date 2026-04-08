@@ -1,4 +1,4 @@
-import './custom-event';
+import '../lib/custom-event';
 
 describe('CustomEvent class', () => {
 	it('Should exist', () => {
