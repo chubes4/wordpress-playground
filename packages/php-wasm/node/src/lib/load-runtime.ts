@@ -27,6 +27,25 @@ import { dirname, joinPaths, toPosixPath } from '@php-wasm/util';
 import { platform } from 'os';
 import { jspi } from 'wasm-feature-detect';
 
+const DEFAULT_OPENSSL_CONFIG_PATH = '/root/install/ssl/openssl.cnf';
+const DEFAULT_OPENSSL_CONFIG =
+	'openssl_conf = openssl_init\n\n[openssl_init]\n';
+
+function createOpenSSLConfigPreRunStep(): (module: {
+	FS: {
+		mkdirTree: (path: string) => void;
+		writeFile: (path: string, content: string) => void;
+	};
+}) => void {
+	return (module) => {
+		module.FS.mkdirTree('/root/install/ssl');
+		module.FS.writeFile(
+			DEFAULT_OPENSSL_CONFIG_PATH,
+			DEFAULT_OPENSSL_CONFIG
+		);
+	};
+}
+
 export interface PHPLoaderOptions {
 	followSymlinks?: boolean;
 	/**
@@ -193,18 +212,15 @@ export async function loadNodeRuntime(
 		...(options.emscriptenOptions || {}),
 		phpWasmAsyncMode,
 		processId,
-		// For legacy PHP: pre-create php.ini via a preRun step. See
-		// createLegacyPhpIniPreRunStep for why this must run before
-		// the PHP SAPI starts. Merge with any caller-provided preRun
-		// hooks (the spread above may have set them).
-		...(isLegacy
-			? {
-					preRun: [
-						createLegacyPhpIniPreRunStep(),
-						...((options.emscriptenOptions as any)?.preRun ?? []),
-					],
-				}
-			: {}),
+		ENV: {
+			OPENSSL_CONF: DEFAULT_OPENSSL_CONFIG_PATH,
+			...((options.emscriptenOptions as any)?.ENV ?? {}),
+		},
+		preRun: [
+			createOpenSSLConfigPreRunStep(),
+			...(isLegacy ? [createLegacyPhpIniPreRunStep()] : []),
+			...((options.emscriptenOptions as any)?.preRun ?? []),
+		],
 		onRuntimeInitialized: (phpRuntime: PHPRuntime) => {
 			/**
 			 * When users mount a directory using the `mount` function,

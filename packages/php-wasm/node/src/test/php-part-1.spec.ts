@@ -483,6 +483,35 @@ phpLoaderOptions.forEach((options) => {
 			});
 		});
 
+		describe('OpenSSL', { skip }, () => {
+			it('generates RSA keys with the default configuration', async () => {
+				const result = await php.run({
+					code: `<?php
+					$key = openssl_pkey_new([
+						'private_key_bits' => 1024,
+						'private_key_type' => OPENSSL_KEYTYPE_RSA,
+					]);
+					$details = $key ? openssl_pkey_get_details($key) : false;
+					$privateKey = '';
+					$exported = $key ? openssl_pkey_export($key, $privateKey) : false;
+					echo json_encode([
+						'generated' => false !== $key,
+						'bits' => $details['bits'] ?? null,
+						'exported' => $exported,
+						'privateKey' => str_starts_with($privateKey, '-----BEGIN PRIVATE KEY-----'),
+					]);
+				`,
+				});
+
+				expect(JSON.parse(result.text)).toEqual({
+					generated: true,
+					bits: 1024,
+					exported: true,
+					privateKey: true,
+				});
+			});
+		});
+
 		describe('exec()', { skip }, () => {
 			it('echo', async () => {
 				const result = await php.run({
