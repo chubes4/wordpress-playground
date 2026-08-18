@@ -1,0 +1,74 @@
+# Contributor-side rebuild of the single PHP-WASM artifact that #4170 touches.
+#
+# The repository commits generated PHP-WASM binaries, and refresh-php-next.yml
+# is gated to Playground maintainers, so a contributor branch cannot exercise a
+# change to the Asyncify instrumentation list. This builds only the target the
+# mysqli_poll regression needs — node + asyncify + PHP 8.3 — so the fix can be
+# validated against a real binary instead of a source reading.
+name: Build php.wasm 8.3 asyncify (node)
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 350
+    steps:
+      # The checkout carries every committed PHP-WASM binary and the build adds
+      # a multi-GB Emscripten image on top, so reclaim the preinstalled
+      # toolchains the runner will not use.
+      - name: Free disk space
+        run: |
+          df -h /
+          sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc \
+            /usr/local/.ghcup /opt/hostedtoolcache/CodeQL /usr/local/share/boost || true
+          sudo docker image prune -af || true
+          df -h /
+
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 1
+
+      - uses: ./.github/actions/prepare-playground
+        with:
+          node-version: 24
+
+      - name: Record pre-build binary identity
+        run: |
+          mkdir -p /tmp/provenance
+          sha256sum packages/php-wasm/node-builds/8-3/asyncify/* \
+            > /tmp/provenance/before.sha256 || true
+          cat /tmp/provenance/before.sha256 || true
+
+      - name: Confirm the instrumentation under test is present
+        run: |
+          set -euo pipefail
+          for symbol in zif_mysqli_poll mysqlnd_poll \
+              mysqlnd_stream_array_from_fd_set mysqlnd_stream_array_to_fd_set; do
+            grep -q "\"${symbol}\"" packages/php-wasm/compile/php/Dockerfile \
+              || { echo "missing from ASYNCIFY_ONLY: ${symbol}" >&2; exit 1; }
+            echo "ok: ${symbol}"
+          done
+
+      - name: Build PHP 8.3 asyncify for node
+        run: node packages/php-wasm/compile/build.js --PLATFORM=node --PHP_VERSION=8.3
+
+      - name: Record post-build binary identity
+        run: |
+          df -h /
+          ls -la packages/php-wasm/node-builds/8-3/asyncify/
+          sha256sum packages/php-wasm/node-builds/8-3/asyncify/* \
+            > /tmp/provenance/after.sha256
+          cat /tmp/provenance/after.sha256
+          echo '--- changed files ---'
+          git status --short packages/php-wasm/node-builds/8-3/asyncify/
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: php-8-3-asyncify-node
+          path: |
+            packages/php-wasm/node-builds/8-3/asyncify/
+            /tmp/provenance/
+          if-no-files-found: error
+          retention-days: 14
