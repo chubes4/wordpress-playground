@@ -9,6 +9,9 @@ name: Build php.wasm 8.3 asyncify (node)
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - ci/php-wasm-build-4161
 
 jobs:
   build:
