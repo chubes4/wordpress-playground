@@ -40,8 +40,8 @@ jobs:
       - name: Record pre-build binary identity
         run: |
           mkdir -p /tmp/provenance
-          sha256sum packages/php-wasm/node-builds/8-3/asyncify/* \
-            > /tmp/provenance/before.sha256 || true
+          find packages/php-wasm/node-builds/8-3/asyncify/ -type f -exec sha256sum {} + \
+            | sort -k2 > /tmp/provenance/before.sha256 || true
           cat /tmp/provenance/before.sha256 || true
 
       - name: Confirm the instrumentation under test is present
@@ -61,9 +61,11 @@ jobs:
         run: |
           df -h /
           ls -la packages/php-wasm/node-builds/8-3/asyncify/
-          sha256sum packages/php-wasm/node-builds/8-3/asyncify/* \
-            > /tmp/provenance/after.sha256
+          find packages/php-wasm/node-builds/8-3/asyncify/ -type f -exec sha256sum {} + \
+            | sort -k2 > /tmp/provenance/after.sha256
           cat /tmp/provenance/after.sha256
+          echo '--- binaries that changed ---'
+          diff /tmp/provenance/before.sha256 /tmp/provenance/after.sha256 || true
           echo '--- changed files ---'
           git status --short packages/php-wasm/node-builds/8-3/asyncify/
 
