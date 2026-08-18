@@ -17,6 +17,24 @@ jobs:
   build:
     runs-on: ubuntu-latest
     timeout-minutes: 350
+
+    # The regression under test needs a real InnoDB row lock, so it needs a real
+    # MySQL. Playground reaches it over TCP; 127.0.0.1 rather than localhost
+    # because the mysqlnd build never negotiates a Unix socket.
+    services:
+      mysql:
+        image: mysql:8
+        env:
+          MYSQL_ROOT_PASSWORD: playground
+          MYSQL_DATABASE: playground
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -uroot -pplayground"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=12
+
     steps:
       # The checkout carries every committed PHP-WASM binary and the build adds
       # a multi-GB Emscripten image on top, so reclaim the preinstalled
@@ -68,6 +86,23 @@ jobs:
           diff /tmp/provenance/before.sha256 /tmp/provenance/after.sha256 || true
           echo '--- changed files ---'
           git status --short packages/php-wasm/node-builds/8-3/asyncify/
+
+      # The decisive step. Against the committed binary this trap wedges the
+      # runtime until an outer timeout kills it; against the rebuilt one the
+      # instrumented frames should let mysqli_poll return on schedule.
+      - name: Run the mysqli_poll regression against the rebuilt binary
+        env:
+          PHP: '8.3'
+          MYSQL_HOST: 127.0.0.1
+          MYSQL_PORT: '3306'
+          MYSQL_USER: root
+          MYSQL_PASSWORD: playground
+          MYSQL_DATABASE: playground
+        run: |
+          npx vitest run \
+            --config packages/php-wasm/node/vite.config.ts \
+            --testNamePattern 'mysqli_poll honors its timeout' \
+            packages/php-wasm/node/src/test/php-mysqli.spec.ts
 
       - uses: actions/upload-artifact@v4
         with:
