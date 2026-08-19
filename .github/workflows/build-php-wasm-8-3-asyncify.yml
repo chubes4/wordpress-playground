@@ -17,6 +17,8 @@ jobs:
   build:
     runs-on: ubuntu-latest
     timeout-minutes: 350
+    permissions:
+      contents: write
 
     # The regression under test needs a real InnoDB row lock, so it needs a real
     # MySQL. Playground reaches it over TCP; 127.0.0.1 rather than localhost
@@ -73,7 +75,7 @@ jobs:
           done
 
       - name: Build PHP 8.3 asyncify for node
-        run: node packages/php-wasm/compile/build.js --PLATFORM=node --PHP_VERSION=8.3
+        run: node packages/php-wasm/compile/build.js --PLATFORM=node --PHP_VERSION=8.3.32
 
       - name: Record post-build binary identity
         run: |
@@ -103,6 +105,38 @@ jobs:
             --config packages/php-wasm/node/vite.config.ts \
             --testNamePattern 'mysqli_poll honors its timeout' \
             packages/php-wasm/node/src/test/php-mysqli.spec.ts
+
+      # The artifacts are committed in this repository, so a source-only branch
+      # cannot be reviewed or merged. Publish the rebuilt binaries onto the PR
+      # branch from the same job that proved them.
+      - name: Publish rebuilt binaries to the PR branch
+        run: |
+          set -euo pipefail
+          rm -f packages/php-wasm/node-builds/8-3/asyncify/php.js.bak
+          git config --global user.name 'Chris Huber'
+          git config --global user.email 'chris.huber@automattic.com'
+          git fetch origin fix-4161-mysqli-poll-timeout
+          rm -rf /tmp/prbranch
+          git worktree add /tmp/prbranch origin/fix-4161-mysqli-poll-timeout
+          rm -rf /tmp/prbranch/packages/php-wasm/node-builds/8-3/asyncify
+          cp -a packages/php-wasm/node-builds/8-3/asyncify \
+            /tmp/prbranch/packages/php-wasm/node-builds/8-3/asyncify
+          cd /tmp/prbranch
+          git add -A packages/php-wasm/node-builds/8-3/asyncify
+          if git diff --cached --quiet; then
+            echo 'No artifact change to publish.'
+            exit 0
+          fi
+          git status --short packages/php-wasm/node-builds/8-3/asyncify
+          git commit -m 'build: regenerate PHP 8.3 asyncify node binaries
+
+          Rebuilt from this branch with the added ASYNCIFY_ONLY instrumentation,
+          pinned to the 8.3.32 patch level already committed here so the binary
+          delta carries the instrumentation change and nothing else.
+
+          Validated in the same job: the mysqli_poll lock-wait regression passes
+          against these binaries and traps against the previous ones.'
+          git push origin HEAD:fix-4161-mysqli-poll-timeout
 
       - uses: actions/upload-artifact@v4
         with:
