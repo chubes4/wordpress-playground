@@ -113,6 +113,10 @@ jobs:
         run: |
           set -euo pipefail
           rm -f packages/php-wasm/node-builds/8-3/asyncify/php.js.bak
+          # node-builds is not prettier-ignored, so the committed glue is
+          # formatted. Emscripten's raw output is not, and committing it
+          # unformatted buries a two-line change under ~12k lines of reflow.
+          npx prettier --write packages/php-wasm/node-builds/8-3/asyncify/php_8_3.js
           git config --global user.name 'Chris Huber'
           git config --global user.email 'chris.huber@automattic.com'
           git fetch origin fix-4161-mysqli-poll-timeout
